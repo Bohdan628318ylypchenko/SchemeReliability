@@ -46,6 +46,9 @@ export namespace sr
             vector<vector<vector<IdxL>>> table
         );
 
+        ReconfigurationTable(const ReconfigurationTable&) = default;
+        ReconfigurationTable& operator=(const ReconfigurationTable&) = default;
+
         ReconfigurationTable(ReconfigurationTable&&) = default;
         ReconfigurationTable& operator=(ReconfigurationTable&&) = default;
 

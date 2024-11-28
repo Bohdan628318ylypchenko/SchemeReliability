@@ -20,7 +20,15 @@ export namespace sr
         SFunc sfunc;
         Harray<double> p;
         Harray<double> q;
+        Harray<string> element_names;
         ReconfigurationTable rt;
+
+        //Scheme(const Scheme& other):
+        //    sfunc { other.sfunc },
+        //    p { other.p },
+        //    q { other.q },
+        //    element_names { other.element_names },
+        //    rt { other.rt }
 
         inline size_t all_count() const noexcept
         {
@@ -43,6 +51,7 @@ export namespace sr
 
     struct SchemeReliability
     {
+        Scheme scheme;
         vector<ScoredStateVector> scored_state_set;
         Harray<size_t> fail_count_per_element_sv2;
         double sp;
@@ -58,7 +67,7 @@ export namespace sr
             result += "fail count per element (sv2):\n|";
             for (size_t i = 0; i < fail_count_per_element_sv2.size(); i++)
             {
-                result += format(" {} = {} |", i, fail_count_per_element_sv2[i]);
+                result += format(" {} = {} |", scheme.element_names[i], fail_count_per_element_sv2[i]);
             }
             result += '\n';
 
@@ -101,6 +110,7 @@ namespace sr
             state_set { state_set },
             sr
             {
+                .scheme = scheme,
                 .scored_state_set = { },
                 .fail_count_per_element_sv2 = { scheme.all_count() },
                 .sp = 0, .sq = 0
@@ -181,7 +191,7 @@ namespace sr
                 w.execute().join();
             }
 
-            return join_workers(workers, full_state_set.size(), scheme.all_count());
+            return join_workers(scheme, workers, full_state_set.size(), scheme.all_count());
         }
 
     private:
@@ -227,12 +237,14 @@ namespace sr
         }
 
         static SchemeReliability join_workers(
+            const Scheme& scheme,
             const vector<StateSetReliabilityCalculator>& workers,
             size_t full_state_set_size,
             size_t all_count
         ) {
             SchemeReliability result
             {
+                .scheme = scheme,
                 .scored_state_set = vector<ScoredStateVector> { },
                 .fail_count_per_element_sv2 = Harray<size_t>(all_count),
                 .sp = 0, .sq = 0
