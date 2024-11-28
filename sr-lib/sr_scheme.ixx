@@ -9,6 +9,7 @@ using std::vector;
 using std::fill;
 using std::span;
 using std::thread;
+using std::string, std::format;
 
 export namespace sr
 {
@@ -46,6 +47,23 @@ export namespace sr
         Harray<size_t> fail_count_per_element_sv2;
         double sp;
         double sq;
+
+        string represent()
+        {
+            string result { };
+
+            result += format("sp = {}, sq = {}\n", sp, sq);
+            result += format("state count = {}\n", scored_state_set.size());
+            result += format("element count = {}\n", fail_count_per_element_sv2.size());
+            result += "fail count per element (sv2):\n|";
+            for (size_t i = 0; i < fail_count_per_element_sv2.size(); i++)
+            {
+                result += format(" {} = {} |", i, fail_count_per_element_sv2[i]);
+            }
+            result += '\n';
+
+            return result;
+        }
     };
 
     SchemeReliability calculate_reliability(const Scheme& scheme);
