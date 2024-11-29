@@ -67,6 +67,8 @@ namespace sr
         const span<StateVector> state_set;
         SchemeReliability sr;
 
+        thread t;
+
         static double calculate_probability(const Scheme& scheme, const StateVector& sv)
         {
             double result { 1 };
@@ -91,7 +93,8 @@ namespace sr
                 .scored_state_set = { },
                 .fail_count_per_element_sv2 = { scheme.all_count() },
                 .sp = 0, .sq = 0
-            }
+            },
+            t { }
         {
             fill(
                 sr.fail_count_per_element_sv2.get_elements().begin(),
@@ -105,9 +108,9 @@ namespace sr
             return sr;
         }
 
-        thread execute()
+        void execute()
         {
-            return thread
+            t = thread
             {
                 [this]()
                 {
@@ -140,11 +143,16 @@ namespace sr
                             }
                         );
 
-                        if (count++ % 10000 == 0)
+                        if (count++ % 100000 == 0)
                             print("thread {} scored {} state vectors\n", tid, count);
                     }
                 }
             };
+        }
+
+        void join()
+        {
+            t.join();
         }
     };
 
@@ -161,6 +169,8 @@ namespace sr
                 StateVectorGenerator { scheme.all_count(), scheme.processor_count() }.generate_full_2n_state_vector_set()
             };
 
+            print("full state set size = {}\n", full_state_set.size());
+
             vector<StateSetReliabilityCalculator> workers
             {
                 split_set_into_workers(
@@ -168,10 +178,13 @@ namespace sr
                 )
             };
 
+            print("worker count = {}\n", workers.size());
+
             for (StateSetReliabilityCalculator& w : workers)
-            {
-                w.execute().join();
-            }
+                w.execute();
+
+            for (StateSetReliabilityCalculator& w : workers)
+                w.join();
 
             return join_workers(scheme, workers, full_state_set.size(), scheme.all_count());
         }
