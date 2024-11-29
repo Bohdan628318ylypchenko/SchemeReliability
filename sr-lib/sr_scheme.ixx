@@ -48,6 +48,7 @@ export namespace sr
         Scheme scheme;
         vector<ScoredStateVector> scored_state_set;
         Harray<size_t> fail_count_per_element_sv2;
+        Harray<double> fail_probability_per_element_sv2;
         double sp;
         double sq;
     };
@@ -92,6 +93,7 @@ namespace sr
                 .scheme = scheme,
                 .scored_state_set = { },
                 .fail_count_per_element_sv2 = { scheme.all_count() },
+                .fail_probability_per_element_sv2 = { scheme.all_count() },
                 .sp = 0, .sq = 0
             },
             t { }
@@ -101,6 +103,11 @@ namespace sr
                 sr.fail_count_per_element_sv2.get_elements().end(),
                 0
             );
+            fill(
+                sr.fail_probability_per_element_sv2.get_elements().begin(),
+                sr.fail_probability_per_element_sv2.get_elements().end(),
+                0
+            );
         }
 
         inline const SchemeReliability& get_scheme_reliability() const noexcept
@@ -108,14 +115,12 @@ namespace sr
             return sr;
         }
 
-        void execute()
+        void execute(size_t full_state_set_size)
         {
             t = thread
             {
-                [this]()
+                [this, full_state_set_size]()
                 {
-                    size_t count = 0;
-                    auto tid = std::this_thread::get_id();
                     for (const StateVector& sv1 : state_set)
                     {
                         StateVector sv2 { sv1 };
@@ -130,9 +135,16 @@ namespace sr
                             sr.sq += probability;
 
                         if (!scheme_state)
+                        {
                             for (size_t i = 0; i < scheme.all_count(); i++)
+                            {
                                 if (!sv2.all[i])
+                                {
                                     sr.fail_count_per_element_sv2[i]++;
+                                    sr.fail_probability_per_element_sv2[i] += probability;
+                                }
+                            }
+                        }
 
                         sr.scored_state_set.push_back(
                             {
@@ -142,9 +154,6 @@ namespace sr
                                 .scheme_state = scheme_state
                             }
                         );
-
-                        if (count++ % 100000 == 0)
-                            print("thread {} scored {} state vectors\n", tid, count);
                     }
                 }
             };
@@ -181,7 +190,7 @@ namespace sr
             print("worker count = {}\n", workers.size());
 
             for (StateSetReliabilityCalculator& w : workers)
-                w.execute();
+                w.execute(full_state_set.size());
 
             for (StateSetReliabilityCalculator& w : workers)
                 w.join();
@@ -242,6 +251,7 @@ namespace sr
                 .scheme = scheme,
                 .scored_state_set = vector<ScoredStateVector> { },
                 .fail_count_per_element_sv2 = Harray<size_t>(all_count),
+                .fail_probability_per_element_sv2 = Harray<double>(all_count),
                 .sp = 0, .sq = 0
             };
             result.scored_state_set.reserve(full_state_set_size);
@@ -252,14 +262,22 @@ namespace sr
                 0
             );
 
+            fill(
+                result.fail_probability_per_element_sv2.get_elements().begin(),
+                result.fail_probability_per_element_sv2.get_elements().end(),
+                0
+            );
+
             for (const StateSetReliabilityCalculator& w : workers)
             {
                 result.scored_state_set.append_range(w.get_scheme_reliability().scored_state_set);
 
                 for (size_t i = 0; i < all_count; i++)
                 {
-                    result.fail_count_per_element_sv2[i] +=
+                    result.fail_count_per_element_sv2[i]+=
                         w.get_scheme_reliability().fail_count_per_element_sv2[i];
+                    result.fail_probability_per_element_sv2[i] +=
+                        w.get_scheme_reliability().fail_probability_per_element_sv2[i];
                 }
 
                 result.sp += w.get_scheme_reliability().sp;

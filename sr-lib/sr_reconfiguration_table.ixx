@@ -9,6 +9,7 @@ using std::vector;
 using std::accumulate;
 using std::unordered_map;
 using std::min_element;
+using std::move;
 
 export namespace sr
 {
@@ -61,7 +62,7 @@ export namespace sr
 
     private:
 
-        void update_reconfiguration_load(
+        vector<IdxL> update_reconfiguration_load(
             Harray<double>& reconfiguration_load,
             const vector<vector<IdxL>>& transitions
         ) const;
@@ -69,6 +70,11 @@ export namespace sr
         void apply_transition_to_load(
             const vector<IdxL>& transition,
             Harray<double>& load
+        ) const;
+
+        bool is_transition_successful(
+            const vector<IdxL>& transition,
+            const Harray<double>& reconfiguration_load
         ) const;
 
         double load_score(const Harray<double>& load) const;
@@ -95,18 +101,26 @@ namespace sr
     {
         Harray<double> reconfiguration_load { normal_load };
 
+        unordered_map<size_t, vector<IdxL>> transitions { };
         for (size_t i = 0; i < processor_count; i++)
             if (sv1.processors[i] == 0)
-                update_reconfiguration_load(reconfiguration_load, table[i]);
+                transitions[i] = update_reconfiguration_load(reconfiguration_load, table[i]);
 
         for (size_t i = 0; i < processor_count; i++)
-            if (reconfiguration_load[i] > max_load[i])
+        {
+            if (sv1.processors[i] == 1 && reconfiguration_load[i] > max_load[i])
+            {
                 sv2.processors[i] = 0;
-            else
+            }
+            else if (sv1.processors[i] == 0 &&
+                     is_transition_successful(transitions.at(i), reconfiguration_load))
+            {
                 sv2.processors[i] = 1;
+            }
+        }
     }
 
-    void ReconfigurationTable::update_reconfiguration_load(
+    vector<IdxL> ReconfigurationTable::update_reconfiguration_load(
         Harray<double>& reconfiguration_load, const vector<vector<IdxL>>& transitions
     ) const {
         unordered_map<double, const vector<IdxL>*> score_transition { };
@@ -121,7 +135,7 @@ namespace sr
             score_transition[score] = &transition;
         }
 
-        auto result = min_element(
+        auto best_transition = min_element(
             score_transition.begin(), score_transition.end(),
             [](const auto& a, const auto& b)
             {
@@ -129,8 +143,16 @@ namespace sr
             }
         );
 
-        if (result != score_transition.end())
-            apply_transition_to_load(*(*result).second, reconfiguration_load);
+        if (best_transition != score_transition.end())
+        {
+            vector<IdxL> result { move(*(*best_transition).second) };
+            apply_transition_to_load(result, reconfiguration_load);
+            return result;
+        }
+        else
+        {
+            return { };
+        }
     }
 
     void ReconfigurationTable::apply_transition_to_load(
@@ -139,6 +161,18 @@ namespace sr
     ) const {
         for (const IdxL& increment : transition)
             load[increment.index] += increment.load;
+    }
+
+    bool ReconfigurationTable::is_transition_successful(
+        const vector<IdxL>& transition,
+        const Harray<double>& reconfiguration_load
+    ) const {
+        for (const auto& r : transition)
+        {
+            if (reconfiguration_load[r.index] > max_load[r.index])
+                return false;
+        }
+        return true;
     }
 
     double ReconfigurationTable::load_score(const Harray<double>& load) const
