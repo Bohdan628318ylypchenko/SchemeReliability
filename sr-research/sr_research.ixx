@@ -8,7 +8,11 @@ using std::span;
 using std::array;
 using std::vector;
 using std::string;
+using std::format;
+using std::ofstream;
+using std::cerr;
 using std::print;
+using std::unique_ptr;
 
 export namespace sr::research
 {
@@ -19,6 +23,59 @@ module : private;
 
 namespace sr::research
 {
+    class Utils
+    {
+    public:
+
+        Utils() = delete;
+
+        static void dump_text_summary(
+            const SchemeReliability& sr, const string& dump_file_name
+        ) {
+            ofstream file { dump_file_name };
+            if (!file.is_open())
+            {
+                print(cerr, "Error: can't open file {} for dumping text summary\n", dump_file_name);
+                return;
+            }
+
+            file << format("sp = {}, sq = {}\n", sr.sp, sr.sq);
+            file << format("state count = {}\n", sr.scored_state_set.size());
+            file << format("element count = {}\n", sr.fail_count_per_element_sv2.size());
+            file << "fail count per element (sv2):\n|";
+            for (size_t i = 0; i < sr.fail_count_per_element_sv2.size(); i++)
+                file << format(" {} = {} |", sr.scheme.element_names[i], sr.fail_count_per_element_sv2[i]);
+            file << '\n';
+            file.flush();
+        }
+
+        static void dump_binary_scored_state_set(
+            const vector<ScoredStateVector>& scored_state_set,
+            const string& dump_file_name
+        ) {
+            ofstream file { dump_file_name, std::ios::binary };
+            if (!file.is_open())
+            {
+                print(cerr, "Error: can't open file {} for dumping scored state set\n", dump_file_name);
+                return;
+            }
+
+            const size_t bufsize { 8388608 };
+            unique_ptr<char[]> buffer { new char[bufsize] };
+            file.rdbuf()->pubsetbuf(buffer.get(), bufsize);
+
+            for (const ScoredStateVector& ssv : scored_state_set)
+            {
+                file.write(reinterpret_cast<const char*>(&ssv.scheme_state), sizeof(bool));
+                file.write(reinterpret_cast<const char*>(&ssv.probability), sizeof(double));
+                file.write(reinterpret_cast<const char*>(ssv.sv1.sv.get_data()), ssv.sv1.all.size() * sizeof(bool));
+                file.write(reinterpret_cast<const char*>(ssv.sv2.sv.get_data()), ssv.sv2.all.size() * sizeof(bool));
+            }
+
+            file.flush();
+        }
+    };
+
     void simple()
     {
         const size_t all_count { 8 };
@@ -60,6 +117,10 @@ namespace sr::research
 
         SchemeReliability result { calculate_reliability(scheme) };
 
-        print("{}\n", result.represent());
+        Utils::dump_text_summary(result, "simple-summary.txt");
+        print("saved summary\n");
+
+        Utils::dump_binary_scored_state_set(result.scored_state_set, "simple-scored-state-set.sstd");
+        print("saved scored state set\n");
     }
 }
