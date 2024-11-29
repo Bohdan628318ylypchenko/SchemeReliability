@@ -10,6 +10,7 @@ using std::fill;
 using std::span;
 using std::thread;
 using std::string;
+using std::print;
 
 export namespace sr
 {
@@ -110,6 +111,8 @@ namespace sr
             {
                 [this]()
                 {
+                    size_t count = 0;
+                    auto tid = std::this_thread::get_id();
                     for (const StateVector& sv1 : state_set)
                     {
                         StateVector sv2 { sv1 };
@@ -136,6 +139,9 @@ namespace sr
                                 .scheme_state = scheme_state
                             }
                         );
+
+                        if (count++ % 10000 == 0)
+                            print("thread {} scored {} state vectors\n", tid, count);
                     }
                 }
             };
