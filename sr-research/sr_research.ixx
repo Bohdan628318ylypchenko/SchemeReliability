@@ -136,15 +136,15 @@ namespace sr::research
         const size_t processor_count { 5 };
 
         array<double, processor_count> normal_load_values { 50, 50, 50, 30, 30 };
-        array<double, processor_count> max_load_values { 100, 100, 100, 60, 60 };
+        array<double, processor_count> max_load_values { 80, 80, 80, 60, 60 };
 
         vector<vector<vector<IdxL>>> table
         {
             { { IdxL { 1, 25 }, IdxL { 2, 25 } } },
             { { IdxL { 0, 25 }, IdxL { 2, 25 } } },
             { { IdxL { 0, 25 }, IdxL { 1, 25 } } },
-            { { IdxL { 4, 30} } },
-            { { IdxL { 3, 30} } }
+            { },
+            { }
         };
 
         array<string, all_count> element_names
@@ -184,13 +184,14 @@ namespace sr::research
             {
                 span<bool> s = sv.all;
                 
-                bool f1 = (s[16] + s[17]) * s[11] * (s[7] + s[8]) * s[0];
-                bool f2 = (s[17] + s[18]) * s[12] * (s[7] + s[8]) * s[1];
-                bool f3 = s[19] * s[13] * (s[7] + s[8]) * s[2];
-                bool f4 = s[20] * (s[14] + s[15]) * s[9] * s[10] * s[3] * s[4];
-                bool f5 = s[5] * s[6] * s[21] * s[22];
+                bool f1 = (s[16] + s[17]) * s[11] * (s[17] + s[18]) * s[12] * (s[7] + s[8]);
+                bool f2 = s[19] * s[13] * s[8];
+                bool f3 = s[0] * s[1] * s[2];
+                bool f4 = s[20] * (s[14] + s[15]) * s[9];
+                bool f5 = s[3] * s[4] * s[10];
+                bool f6 = s[5] * s[6] * (s[21] + s[22]);
 
-                return f1 * f2 * f3 * f4 * f5;
+                return f1 * f2 * f3 * f4 * f5 * f6;
             },
             .p = Harray<double> { p_values },
             .q = Harray<double> { q_values },

@@ -97,18 +97,7 @@ namespace sr
                 .sp = 0, .sq = 0
             },
             t { }
-        {
-            fill(
-                sr.fail_count_per_element_sv2.get_elements().begin(),
-                sr.fail_count_per_element_sv2.get_elements().end(),
-                0
-            );
-            fill(
-                sr.fail_probability_per_element_sv2.get_elements().begin(),
-                sr.fail_probability_per_element_sv2.get_elements().end(),
-                0
-            );
-        }
+        { }
 
         inline const SchemeReliability& get_scheme_reliability() const noexcept
         {
@@ -121,6 +110,17 @@ namespace sr
             {
                 [this, full_state_set_size]()
                 {
+                    fill(
+                        sr.fail_count_per_element_sv2.get_elements().begin(),
+                        sr.fail_count_per_element_sv2.get_elements().end(),
+                        0
+                    );
+                    fill(
+                        sr.fail_probability_per_element_sv2.get_elements().begin(),
+                        sr.fail_probability_per_element_sv2.get_elements().end(),
+                        0
+                    );
+
                     for (const StateVector& sv1 : state_set)
                     {
                         StateVector sv2 { sv1 };

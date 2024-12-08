@@ -10,6 +10,7 @@ using std::accumulate;
 using std::unordered_map;
 using std::min_element;
 using std::move;
+using std::optional, std::nullopt;
 
 export namespace sr
 {
@@ -62,7 +63,7 @@ export namespace sr
 
     private:
 
-        vector<IdxL> update_reconfiguration_load(
+        optional<vector<IdxL>> update_reconfiguration_load(
             Harray<double>& reconfiguration_load,
             const vector<vector<IdxL>>& transitions
         ) const;
@@ -101,7 +102,7 @@ namespace sr
     {
         Harray<double> reconfiguration_load { normal_load };
 
-        unordered_map<size_t, vector<IdxL>> transitions { };
+        unordered_map<size_t, optional<vector<IdxL>>> transitions { };
         for (size_t i = 0; i < processor_count; i++)
             if (sv1.processors[i] == 0)
                 transitions[i] = update_reconfiguration_load(reconfiguration_load, table[i]);
@@ -112,17 +113,20 @@ namespace sr
             {
                 sv2.processors[i] = 0;
             }
-            else if (sv1.processors[i] == 0 &&
-                     is_transition_successful(transitions.at(i), reconfiguration_load))
+            else if (transitions[i].has_value() && sv1.processors[i] == 0 &&
+                     is_transition_successful(transitions[i].value(), reconfiguration_load))
             {
                 sv2.processors[i] = 1;
             }
         }
     }
 
-    vector<IdxL> ReconfigurationTable::update_reconfiguration_load(
+    optional<vector<IdxL>> ReconfigurationTable::update_reconfiguration_load(
         Harray<double>& reconfiguration_load, const vector<vector<IdxL>>& transitions
     ) const {
+        if (transitions.empty())
+            return nullopt;
+
         unordered_map<double, const vector<IdxL>*> score_transition { };
         for (const vector<IdxL>& transition : transitions)
         {
@@ -151,7 +155,7 @@ namespace sr
         }
         else
         {
-            return { };
+            return nullopt;
         }
     }
 

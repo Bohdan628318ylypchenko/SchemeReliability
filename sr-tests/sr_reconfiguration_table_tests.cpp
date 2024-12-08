@@ -12,6 +12,7 @@ using std::span;
 using std::count;
 using std::string;
 using std::format;
+using std::function;
 
 namespace sr::tests
 {
@@ -28,7 +29,7 @@ namespace sr::tests
             return result;
         }
 
-        void assert_log_s1_s2(const StateVector& s1, const StateVector& s2)
+        void assert_log_s1_s2(const StateVector& s1, const StateVector& s2, function<void(const size_t, const size_t)> true_count_action)
         {
             auto s1_true_count { count(s1.all.begin(), s1.all.end(), true) };
             auto s2_true_count { count(s2.all.begin(), s2.all.end(), true) };
@@ -37,7 +38,7 @@ namespace sr::tests
             Logger::WriteMessage(format("s1 = {}; true count = {}\n", state_to_str(s1), s1_true_count).c_str());
             Logger::WriteMessage(format("s2 = {}; true count = {}\n", state_to_str(s2), s2_true_count).c_str());
 
-            Assert::IsTrue(s2_true_count >= s1_true_count);
+            true_count_action(s1_true_count, s2_true_count);
         }
 
     public:
@@ -78,7 +79,54 @@ namespace sr::tests
 
                 rt.reconfigure_state(s1, s2);
 
-                assert_log_s1_s2(s1, s2);
+                assert_log_s1_s2(
+                    s1, s2,
+                    [](const auto s1_true_count, const auto s2_true_count)
+                    {
+                        Assert::IsTrue(s1_true_count <= s2_true_count);
+                    }
+                );
+            }
+        }
+
+        TEST_METHOD(reconfiguration_table_5p)
+        {
+            const size_t all_count { 8 };
+            const size_t processor_count { 5 };
+
+            array<double, processor_count> normal_load_values { 50, 50, 50, 30, 30 };
+            array<double, processor_count> max_load_values { 80, 80, 80, 60, 60 };
+
+            vector<vector<vector<IdxL>>> table
+            {
+                { { IdxL { 1, 25 }, IdxL { 2, 25 } } },
+                { { IdxL { 0, 25 }, IdxL { 2, 25 } } },
+                { { IdxL { 0, 25 }, IdxL { 1, 25 } } },
+                { },
+                { }
+            };
+
+            ReconfigurationTable rt
+            {
+                processor_count,
+                span<double> { normal_load_values },
+                span<double> { max_load_values },
+                table
+            };
+
+            StateVectorGenerator sg { all_count, processor_count };
+
+            vector<StateVector> full_state_set { sg.generate_full_2n_state_vector_set() };
+
+            StateVector s2 { Harray<bool>(all_count), processor_count };
+
+            for (auto& s1 : full_state_set)
+            {
+                s2 = s1;
+
+                rt.reconfigure_state(s1, s2);
+
+                assert_log_s1_s2(s1, s2, [](const auto a, const auto b) { return; });
             }
         }
     };
