@@ -41,12 +41,13 @@ namespace sr::tests
 
             array<string, all_count> element_names { "p1", "p2", "p3", "p4", "c1", "d1", "d2", "c2" };
 
+            auto sfunc = [](const StateVector& sv)
+            {
+                return sv.all[0] && sv.all[1] && (sv.all[2] || sv.all[3]) && sv.all[4] && (sv.all[5] || sv.all[6]) && sv.all[7];
+            };
             Scheme scheme
             {
-                .sfunc = [](const StateVector& sv)
-                {
-                    return sv.all[0] && sv.all[1] && (sv.all[2] || sv.all[3]) && sv.all[4] && (sv.all[5] || sv.all[6]) && sv.all[7];
-                },
+                .sfunc = sfunc,
                 .p = Harray<double> { p_values },
                 .q = Harray<double> { q_values },
                 .element_names = Harray<string> { element_names },
@@ -55,7 +56,8 @@ namespace sr::tests
                     processor_count,
                     span<double> { normal_load_values },
                     span<double> { max_load_values },
-                    table
+                    table,
+                    sfunc
                 }
             };
 

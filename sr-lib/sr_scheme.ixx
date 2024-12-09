@@ -1,5 +1,6 @@
 export module sr_scheme;
 
+export import sr_aliases;
 export import sr_reconfiguration_table;
 
 import std;
@@ -13,7 +14,6 @@ using std::print;
 
 export namespace sr
 {
-    using SFunc = function<bool(const StateVector&)>;
 
     struct Scheme
     {
@@ -109,8 +109,7 @@ namespace sr
                 {
                     for (const StateVector& sv1 : state_set)
                     {
-                        StateVector sv2 = sv1;
-                        scheme.rt.reconfigure_state(sv1, sv2);
+                        StateVector sv2 = scheme.rt.reconfigure_state(sv1);
 
                         bool scheme_state_sv1 { scheme.sfunc(sv1) };
                         bool scheme_state_sv2 { scheme.sfunc(sv2) };

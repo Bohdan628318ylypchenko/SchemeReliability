@@ -1,12 +1,13 @@
 export module sr_reconfiguration_table;
 
 export import sr_state;
+import sr_aliases;
 
 import std;
 
 using std::span;
 using std::vector;
-using std::accumulate;
+using std::stack;
 using std::unordered_map;
 using std::min_element;
 using std::move;
@@ -27,6 +28,9 @@ export namespace sr
         { }
     };
 
+    using Transition = vector<IdxL>;
+    using TransitionSet = vector<Transition>;
+
     class ReconfigurationTable
     {
     private:
@@ -37,7 +41,9 @@ export namespace sr
 
         const Harray<double> max_load;
 
-        const vector<vector<vector<IdxL>>> table;
+        const vector<TransitionSet> table;
+
+        const SFunc sfunc;
 
     public:
 
@@ -45,7 +51,8 @@ export namespace sr
             size_t processor_count,
             span<double> normal_load,
             span<double> max_load,
-            vector<vector<vector<IdxL>>> table
+            vector<TransitionSet> table,
+            SFunc sfunc
         );
 
         ReconfigurationTable(const ReconfigurationTable&) = default;
@@ -59,26 +66,26 @@ export namespace sr
             return processor_count;
         }
 
-        void reconfigure_state(const StateVector& sv1, StateVector& sv2) const;
+        StateVector reconfigure_state(const StateVector& sv1) const;
 
     private:
 
-        optional<vector<IdxL>> update_reconfiguration_load(
-            Harray<double>& reconfiguration_load,
-            const vector<vector<IdxL>>& transitions
+        optional<StateVector> traverse_reconfiguration_tree(
+            const StateVector& sv1,
+            stack<size_t>& failed_processor_indexes,
+            unordered_map<size_t, Transition>& applied_transitions,
+            vector<StateVector>& failed_state_vectors
         ) const;
 
         void apply_transition_to_load(
-            const vector<IdxL>& transition,
+            const Transition& transition,
             Harray<double>& load
         ) const;
 
         bool is_transition_successful(
-            const vector<IdxL>& transition,
+            const Transition& transition,
             const Harray<double>& reconfiguration_load
         ) const;
-
-        double load_score(const Harray<double>& load) const;
     };
 }
 
@@ -90,77 +97,100 @@ namespace sr
         size_t processor_count,
         span<double> normal_load,
         span<double> max_load,
-        vector<vector<vector<IdxL>>> table
+        vector<TransitionSet> table,
+        SFunc sfunc
     ):
         processor_count { processor_count },
         normal_load { normal_load },
         max_load { max_load },
-        table { table }
+        table { table },
+        sfunc { sfunc }
     { }
 
-    void ReconfigurationTable::reconfigure_state(const StateVector& sv1, StateVector& sv2) const
+    StateVector ReconfigurationTable::reconfigure_state(const StateVector& sv1) const
     {
-        Harray<double> reconfiguration_load { normal_load };
-
-        unordered_map<size_t, optional<vector<IdxL>>> transitions { };
+        stack<size_t> failed_processors_indexes { };
         for (size_t i = 0; i < processor_count; i++)
             if (sv1.processors[i] == 0)
-                transitions[i] = update_reconfiguration_load(reconfiguration_load, table[i]);
-
-        for (size_t i = 0; i < processor_count; i++)
+                failed_processors_indexes.push(i);
+        if (failed_processors_indexes.empty())
+            return sv1;
+        
+        vector<StateVector> failed_state_vectors { };
+        unordered_map<size_t, Transition> applied_transitions { };
+        optional<StateVector> reconfiguration_result
         {
-            if (sv1.processors[i] == 1 && reconfiguration_load[i] > max_load[i])
-            {
-                sv2.processors[i] = 0;
-            }
-            else if (transitions[i].has_value() && sv1.processors[i] == 0 &&
-                     is_transition_successful(transitions[i].value(), reconfiguration_load))
-            {
-                sv2.processors[i] = 1;
-            }
-        }
+            traverse_reconfiguration_tree(
+                sv1,
+                failed_processors_indexes,
+                applied_transitions,
+                failed_state_vectors
+            )
+        };
+
+        return reconfiguration_result.value_or(
+            failed_state_vectors.empty() ? sv1 : failed_state_vectors[0]
+        );
     }
 
-    optional<vector<IdxL>> ReconfigurationTable::update_reconfiguration_load(
-        Harray<double>& reconfiguration_load, const vector<vector<IdxL>>& transitions
+    optional<StateVector> ReconfigurationTable::traverse_reconfiguration_tree(
+        const StateVector& sv1,
+        stack<size_t>& failed_processor_indexes,
+        unordered_map<size_t, Transition>& applied_transitions,
+        vector<StateVector>& failed_state_vectors
     ) const {
-        if (transitions.empty())
-            return nullopt;
-
-        unordered_map<double, const vector<IdxL>*> score_transition { };
-        for (const vector<IdxL>& transition : transitions)
+        if (failed_processor_indexes.empty())
         {
-            Harray<double> temp_load { reconfiguration_load };
+            Harray<double> reconfiguration_load { normal_load };
+            for (const auto& [pidx, transition] : applied_transitions)
+                apply_transition_to_load(transition, reconfiguration_load);
 
-            apply_transition_to_load(transition, temp_load);
-
-            double score { load_score(temp_load) };
-
-            score_transition[score] = &transition;
-        }
-
-        auto best_transition = min_element(
-            score_transition.begin(), score_transition.end(),
-            [](const auto& a, const auto& b)
+            StateVector sv2 { sv1 };
+            for (size_t i = 0; i < processor_count; i++)
             {
-                return a.first < b.first;
+                if (sv1.processors[i] == 1 && reconfiguration_load[i] > max_load[i])
+                {
+                    sv2.processors[i] = 0;
+                }
+                else if (sv1.processors[i] == 0 &&
+                         is_transition_successful(applied_transitions[i], reconfiguration_load))
+                {
+                    sv2.processors[i] = 1;
+                }
             }
-        );
 
-        if (best_transition != score_transition.end())
-        {
-            vector<IdxL> result { move(*(*best_transition).second) };
-            apply_transition_to_load(result, reconfiguration_load);
-            return result;
+            if (sfunc(sv2))
+            {
+                return sv2;
+            }
+            else
+            {
+                failed_state_vectors.push_back(sv2);
+                return nullopt;
+            }
         }
-        else
+
+        size_t current_processor_index { failed_processor_indexes.top() };
+        for (const Transition& transition : table[current_processor_index])
         {
-            return nullopt;
+            failed_processor_indexes.pop();
+            applied_transitions[current_processor_index] = transition;
+            auto result =
+                traverse_reconfiguration_tree(
+                    sv1, failed_processor_indexes, applied_transitions, failed_state_vectors
+                );
+
+            if (result.has_value())
+                return result;
+
+            failed_processor_indexes.push(current_processor_index);
+            applied_transitions.erase(current_processor_index);
         }
+        return nullopt;
     }
 
     void ReconfigurationTable::apply_transition_to_load(
-        const vector<IdxL>& transition,
+        const Transition& transition,
         Harray<double>& load
     ) const {
         for (const IdxL& increment : transition)
@@ -168,23 +198,17 @@ namespace sr
     }
 
     bool ReconfigurationTable::is_transition_successful(
-        const vector<IdxL>& transition,
+        const Transition& transition,
         const Harray<double>& reconfiguration_load
     ) const {
+        if (transition.empty())
+            return false;
+
         for (const auto& r : transition)
         {
             if (reconfiguration_load[r.index] > max_load[r.index])
                 return false;
         }
         return true;
-    }
-
-    double ReconfigurationTable::load_score(const Harray<double>& load) const
-    {
-        double result { 0 };
-        for (size_t i = 0; i < processor_count; i++)
-            result += load[i] / max_load[i];
-        result /= static_cast<double>(processor_count);
-        return result;
     }
 }

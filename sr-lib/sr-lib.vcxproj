@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="sr_aliases.ixx" />
     <ClCompile Include="sr_harray.ixx" />
     <ClCompile Include="sr_reconfiguration_table.ixx" />
     <ClCompile Include="sr_scheme.ixx" />

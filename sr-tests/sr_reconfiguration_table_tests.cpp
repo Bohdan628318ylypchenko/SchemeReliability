@@ -59,25 +59,27 @@ namespace sr::tests
                 { { IdxL(0, 20), IdxL(1, 10) }, { IdxL(0, 10), IdxL(1, 20) } }
             };
 
+            auto sfunc = [](const StateVector& sv)
+            {
+                auto& s = sv.all;
+                return s[0] && s[1] && (s[2] || s[3]);
+            };
             ReconfigurationTable rt
             {
                 processor_count,
                 span<double> { normal_load_values },
                 span<double> { max_load_values },
-                table
+                table,
+                sfunc
             };
 
             StateVectorGenerator sg { all_count, processor_count };
 
             vector<StateVector> full_state_set { sg.generate_full_2n_state_vector_set() };
 
-            StateVector s2 { Harray<bool>(all_count), processor_count };
-
             for (auto& s1 : full_state_set)
             {
-                s2 = s1;
-
-                rt.reconfigure_state(s1, s2);
+                StateVector s2 = rt.reconfigure_state(s1);
 
                 assert_log_s1_s2(
                     s1, s2,
@@ -106,25 +108,27 @@ namespace sr::tests
                 { }
             };
 
+            auto sfunc = [](const StateVector& sv)
+            {
+                auto& s = sv.all;
+                return s[0] && s[1] && s[2] && s[3] && s[4] && s[5];
+            };
             ReconfigurationTable rt
             {
                 processor_count,
                 span<double> { normal_load_values },
                 span<double> { max_load_values },
-                table
+                table,
+                sfunc
             };
 
             StateVectorGenerator sg { all_count, processor_count };
 
             vector<StateVector> full_state_set { sg.generate_full_2n_state_vector_set() };
 
-            StateVector s2 { Harray<bool>(all_count), processor_count };
-
             for (auto& s1 : full_state_set)
             {
-                s2 = s1;
-
-                rt.reconfigure_state(s1, s2);
+                StateVector s2 = rt.reconfigure_state(s1);
 
                 assert_log_s1_s2(s1, s2, [](const auto a, const auto b) { return; });
             }
