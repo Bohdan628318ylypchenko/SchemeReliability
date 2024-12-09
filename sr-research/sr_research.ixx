@@ -244,26 +244,16 @@ namespace sr::research
         //};
 
         // sp = 0.9984416493816418, sq = 0.0015583506183533343
-        //vector<vector<vector<IdxL>>> table
-        //{
-        //    { { IdxL { 1, 25 }, IdxL { 2, 25 } } },
-        //    { { IdxL { 0, 25 }, IdxL { 2, 25 } } },
-        //    { { IdxL { 0, 25 }, IdxL { 1, 25 } } },
-        //    { { IdxL { 4, 30 } }, { IdxL { 0, 20 }, IdxL { 1, 20 }, IdxL { 2, 20 } }, { IdxL { 0, 25 }, IdxL { 1, 25 } }, { IdxL { 1, 25 }, IdxL { 2, 25 } }, { IdxL { 0, 25 }, IdxL { 2, 25 } }, { IdxL { 0, 30 } }, { IdxL { 1, 30 } }, { IdxL { 2, 30 } } },
-        //    { { IdxL { 3, 30 } }, { IdxL { 0, 20 }, IdxL { 1, 20 }, IdxL { 2, 20 } }, { IdxL { 0, 25 }, IdxL { 1, 25 } }, { IdxL { 1, 25 }, IdxL { 2, 25 } }, { IdxL { 0, 25 }, IdxL { 2, 25 } }, { IdxL { 0, 30 } }, { IdxL { 1, 30 } }, { IdxL { 2, 30 } } }
-        //};
-
-        // sp = 0.9984415631300855, sq = 0.0015584368699100033
         vector<vector<vector<IdxL>>> table
         {
-            { { IdxL { 1, 40 }, IdxL { 2, 10 } }, { IdxL { 1, 30 }, IdxL { 2, 20 } }, { IdxL { 1, 25 }, IdxL { 2, 25 } }, { IdxL { 1, 20 }, IdxL { 2, 30 } }, { IdxL { 1, 10 }, IdxL { 2, 40 } } },
-            { { IdxL { 0, 40 }, IdxL { 2, 10 } }, { IdxL { 0, 30 }, IdxL { 2, 20 } }, { IdxL { 0, 25 }, IdxL { 2, 25 } }, { IdxL { 0, 20 }, IdxL { 2, 30 } }, { IdxL { 0, 10 }, IdxL { 2, 40 } } },
-            { { IdxL { 0, 40 }, IdxL { 1, 10 } }, { IdxL { 0, 30 }, IdxL { 1, 20 } }, { IdxL { 0, 25 }, IdxL { 1, 25 } }, { IdxL { 0, 20 }, IdxL { 1, 30 } }, { IdxL { 0, 10 }, IdxL { 1, 40 } } },
+            { { IdxL { 1, 25 }, IdxL { 2, 25 } } },
+            { { IdxL { 0, 25 }, IdxL { 2, 25 } } },
+            { { IdxL { 0, 25 }, IdxL { 1, 25 } } },
             { { IdxL { 4, 30 } }, { IdxL { 0, 20 }, IdxL { 1, 20 }, IdxL { 2, 20 } }, { IdxL { 0, 25 }, IdxL { 1, 25 } }, { IdxL { 1, 25 }, IdxL { 2, 25 } }, { IdxL { 0, 25 }, IdxL { 2, 25 } }, { IdxL { 0, 30 } }, { IdxL { 1, 30 } }, { IdxL { 2, 30 } } },
             { { IdxL { 3, 30 } }, { IdxL { 0, 20 }, IdxL { 1, 20 }, IdxL { 2, 20 } }, { IdxL { 0, 25 }, IdxL { 1, 25 } }, { IdxL { 1, 25 }, IdxL { 2, 25 } }, { IdxL { 0, 25 }, IdxL { 2, 25 } }, { IdxL { 0, 30 } }, { IdxL { 1, 30 } }, { IdxL { 2, 30 } } }
         };
 
-        // sp = 0.9984415775024696, sq = 0.0015584224975255538
+        // sp = 0.9984416493816418, sq = 0.0015583506183533343
         //vector<vector<vector<IdxL>>> table
         //{
         //    { { IdxL { 1, 40 }, IdxL { 2, 10 } }, { IdxL { 1, 30 }, IdxL { 2, 20 } }, { IdxL { 1, 25 }, IdxL { 2, 25 } }, { IdxL { 1, 20 }, IdxL { 2, 30 } }, { IdxL { 1, 10 }, IdxL { 2, 40 } } },

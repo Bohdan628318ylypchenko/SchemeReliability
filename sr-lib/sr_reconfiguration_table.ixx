@@ -9,9 +9,8 @@ using std::span;
 using std::vector;
 using std::stack;
 using std::unordered_map;
-using std::min_element;
 using std::move;
-using std::optional, std::nullopt;
+using std::count;
 
 export namespace sr
 {
@@ -70,16 +69,25 @@ export namespace sr
 
     private:
 
-        optional<StateVector> traverse_reconfiguration_tree(
+        struct ReconfigurationTreeTraversionResult
+        {
+            StateVector best;
+            StateVector best_zero;
+            size_t best_zero_active_count;
+        };
+
+        bool traverse_reconfiguration_tree(
             const StateVector& sv1,
             stack<size_t>& failed_processor_indexes,
-            unordered_map<size_t, Transition>& applied_transitions,
-            vector<StateVector>& failed_state_vectors
+            unordered_map<size_t, const Transition*>& applied_transitions,
+            span<double>& reconfiguration_load,
+            ReconfigurationTreeTraversionResult& result
         ) const;
 
         void apply_transition_to_load(
             const Transition& transition,
-            Harray<double>& load
+            span<double>& load,
+            double sign
         ) const;
 
         bool is_transition_successful(
@@ -116,35 +124,38 @@ namespace sr
         if (failed_processors_indexes.empty())
             return sv1;
         
-        vector<StateVector> failed_state_vectors { };
-        unordered_map<size_t, Transition> applied_transitions { };
-        optional<StateVector> reconfiguration_result
+        unordered_map<size_t, const Transition*> applied_transitions { };
+        Harray<double> reconfiguration_load_memory { normal_load  };
+        span<double> reconfiguration_load { reconfiguration_load_memory.get_elements() };
+        ReconfigurationTreeTraversionResult result
+        {
+            .best = { },
+            .best_zero = { },
+            .best_zero_active_count = 0
+        };
+        bool is_success
         {
             traverse_reconfiguration_tree(
                 sv1,
                 failed_processors_indexes,
                 applied_transitions,
-                failed_state_vectors
+                reconfiguration_load,
+                result
             )
         };
 
-        return reconfiguration_result.value_or(
-            failed_state_vectors.empty() ? sv1 : failed_state_vectors[0]
-        );
+        return is_success ? result.best : result.best_zero;
     }
 
-    optional<StateVector> ReconfigurationTable::traverse_reconfiguration_tree(
+    bool ReconfigurationTable::traverse_reconfiguration_tree(
         const StateVector& sv1,
         stack<size_t>& failed_processor_indexes,
-        unordered_map<size_t, Transition>& applied_transitions,
-        vector<StateVector>& failed_state_vectors
+        unordered_map<size_t, const Transition*>& applied_transitions,
+        span<double>& reconfiguration_load,
+        ReconfigurationTreeTraversionResult& result
     ) const {
         if (failed_processor_indexes.empty())
         {
-            Harray<double> reconfiguration_load { normal_load };
-            for (const auto& [pidx, transition] : applied_transitions)
-                apply_transition_to_load(transition, reconfiguration_load);
-
             StateVector sv2 { sv1 };
             for (size_t i = 0; i < processor_count; i++)
             {
@@ -153,7 +164,7 @@ namespace sr
                     sv2.processors[i] = 0;
                 }
                 else if (sv1.processors[i] == 0 &&
-                         is_transition_successful(applied_transitions[i], reconfiguration_load))
+                         is_transition_successful(*applied_transitions[i], reconfiguration_load))
                 {
                     sv2.processors[i] = 1;
                 }
@@ -161,40 +172,50 @@ namespace sr
 
             if (sfunc(sv2))
             {
-                return sv2;
+                result.best = move(sv2);
+                return true;
             }
             else
             {
-                failed_state_vectors.push_back(sv2);
-                return nullopt;
+                size_t current_active_count { static_cast<size_t>(count(sv2.processors.begin(), sv2.processors.end(), true)) };
+                if (current_active_count > result.best_zero_active_count)
+                {
+                    result.best_zero = move(sv2);
+                    result.best_zero_active_count = current_active_count;
+                }
+                return false;
             }
         }
 
         size_t current_processor_index { failed_processor_indexes.top() };
+        failed_processor_indexes.pop();
         for (const Transition& transition : table[current_processor_index])
         {
-            failed_processor_indexes.pop();
-            applied_transitions[current_processor_index] = transition;
-            auto result =
+            applied_transitions[current_processor_index] = &transition;
+            apply_transition_to_load(transition, reconfiguration_load, 1.0);
+            bool is_success
+            {
                 traverse_reconfiguration_tree(
-                    sv1, failed_processor_indexes, applied_transitions, failed_state_vectors
-                );
+                    sv1, failed_processor_indexes, applied_transitions, reconfiguration_load, result
+                )
+            };
 
-            if (result.has_value())
-                return result;
+            if (is_success) return true;
 
-            failed_processor_indexes.push(current_processor_index);
+            apply_transition_to_load(transition, reconfiguration_load, -1.0);
             applied_transitions.erase(current_processor_index);
         }
-        return nullopt;
+        failed_processor_indexes.push(current_processor_index);
+        return false;
     }
 
     void ReconfigurationTable::apply_transition_to_load(
         const Transition& transition,
-        Harray<double>& load
+        span<double>& load,
+        double sign
     ) const {
         for (const IdxL& increment : transition)
-            load[increment.index] += increment.load;
+            load[increment.index] += sign * increment.load;
     }
 
     bool ReconfigurationTable::is_transition_successful(
