@@ -2,13 +2,15 @@ import sr_research;
 
 import std;
 
-using std::print;
-
+using std::println;
 int main()
 {
     //print("=== simple ===\n");
     //sr::research::simple();
 
-    print("=== original v17 ===\n");
-    sr::research::v17();
+    println("=== original v17 ===");
+    sr::research::v17_original();
+
+    println("=== v17 with rt ===");
+    sr::research::v17_rt();
 }

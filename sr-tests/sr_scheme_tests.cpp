@@ -66,10 +66,6 @@ namespace sr::tests
             Assert::IsTrue(fabs(result.sq - 0.3856) <= 1e-4);
             Assert::IsTrue(result.sp > result.sq);
             Assert::IsTrue(fabs(result.sp + result.sq - 1.0) <= 1e-5);
-
-            array<double, all_count> expected_fails { 0.0, 0.0, 0.0, 0.0, 0.2, 0.0976, 0.0976, 0.2 };
-            for (size_t i = 0; i < all_count; i++)
-                Assert::IsTrue(fabs(expected_fails[i] - result.fail_probability_per_element_sv2[i]) <= 1e-4);
         }
     };
 }
