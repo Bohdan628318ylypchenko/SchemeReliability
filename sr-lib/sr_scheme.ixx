@@ -26,9 +26,9 @@ export namespace sr
 
         Scheme(
             SFunc sfunc,
-            Harray<double> p,
-            Harray<double> q,
-            Harray<string> element_names,
+            span<double> p,
+            span<double> q,
+            span<string> element_names,
             ReconfigurationTable* rt
         ):
             sfunc { sfunc },

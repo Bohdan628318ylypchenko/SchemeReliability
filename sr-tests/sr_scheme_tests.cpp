@@ -50,9 +50,9 @@ namespace sr::tests
             Scheme scheme
             {
                 sfunc,
-                Harray<double> { p_values },
-                Harray<double> { q_values },
-                Harray<string> { element_names },
+                span<double> { p_values },
+                span<double> { q_values },
+                span<string> { element_names },
                 new BruteForceReconfigurationTable
                 {
                     PROCESSOR_COUNT,
@@ -77,9 +77,9 @@ namespace sr::tests
             Scheme scheme
             {
                 sfunc,
-                Harray<double> { p_values },
-                Harray<double> { q_values },
-                Harray<string> { element_names },
+                span<double> { p_values },
+                span<double> { q_values },
+                span<string> { element_names },
                 new GreedyReconfigurationTable
                 {
                     PROCESSOR_COUNT,

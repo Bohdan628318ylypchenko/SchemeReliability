@@ -158,9 +158,9 @@ namespace sr::research
         Scheme scheme
         {
             sfunc,
-            Harray<double> { p_values },
-            Harray<double> { q_values },
-            Harray<string> { element_names },
+            span<double> { p_values },
+            span<double> { q_values },
+            span<string> { element_names },
             Utils::create_log_brute_force(
                 processor_count,
                 span<double> { normal_load_values },
@@ -245,9 +245,9 @@ namespace sr::research
         Scheme scheme
         {
             sfunc,
-            Harray<double> { p_values },
-            Harray<double> { q_values },
-            Harray<string> { element_names },
+            span<double> { p_values },
+            span<double> { q_values },
+            span<string> { element_names },
             Utils::create_log_brute_force(
                 processor_count,
                 span<double> { normal_load_values },
@@ -352,9 +352,9 @@ namespace sr::research
         Scheme scheme
         {
             sfunc,
-            Harray<double> { p_values },
-            Harray<double> { q_values },
-            Harray<string> { element_names },
+            span<double> { p_values },
+            span<double> { q_values },
+            span<string> { element_names },
             Utils::create_log_greedy(
                 processor_count,
                 span<double> { normal_load_values },
