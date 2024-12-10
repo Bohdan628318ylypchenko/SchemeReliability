@@ -113,11 +113,11 @@ namespace sr::research
         };
         Scheme scheme
         {
-            .sfunc = sfunc,
-            .p = Harray<double> { p_values },
-            .q = Harray<double> { q_values },
-            .element_names = Harray<string> { element_names },
-            .rt = ReconfigurationTable
+            sfunc,
+            Harray<double> { p_values },
+            Harray<double> { q_values },
+            Harray<string> { element_names },
+            new BruteForceReconfigurationTable
             {
                 processor_count,
                 span<double> { normal_load_values },
@@ -201,11 +201,11 @@ namespace sr::research
         };
         Scheme scheme
         {
-            .sfunc = sfunc,
-            .p = Harray<double> { p_values },
-            .q = Harray<double> { q_values },
-            .element_names = Harray<string> { element_names },
-            .rt = ReconfigurationTable
+            sfunc,
+            Harray<double> { p_values },
+            Harray<double> { q_values },
+            Harray<string> { element_names },
+            new BruteForceReconfigurationTable
             {
                 processor_count,
                 span<double> { normal_load_values },
@@ -309,17 +309,16 @@ namespace sr::research
         };
         Scheme scheme
         {
-            .sfunc = sfunc,
-            .p = Harray<double> { p_values },
-            .q = Harray<double> { q_values },
-            .element_names = Harray<string> { element_names },
-            .rt = ReconfigurationTable
+            sfunc,
+            Harray<double> { p_values },
+            Harray<double> { q_values },
+            Harray<string> { element_names },
+            new GreedyReconfigurationTable
             {
                 processor_count,
                 span<double> { normal_load_values },
                 span<double> { max_load_values },
-                table,
-                sfunc
+                table
             }
         };
 

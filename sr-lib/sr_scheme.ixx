@@ -11,6 +11,8 @@ using std::span;
 using std::thread;
 using std::string;
 using std::print;
+using std::shared_ptr;
+using std::move;
 
 export namespace sr
 {
@@ -21,7 +23,35 @@ export namespace sr
         Harray<double> p;
         Harray<double> q;
         Harray<string> element_names;
-        ReconfigurationTable rt;
+        shared_ptr<ReconfigurationTable> rt;
+
+        Scheme(
+            SFunc sfunc,
+            Harray<double> p,
+            Harray<double> q,
+            Harray<string> element_names,
+            ReconfigurationTable* rt
+        ):
+            sfunc { sfunc },
+            p { p }, q { q }, element_names { element_names },
+            rt { rt }
+        { }
+            
+        Scheme(const Scheme& other):
+            sfunc { other.sfunc },
+            p { other.p },
+            q { other.q },
+            element_names { other.element_names },
+            rt { other.rt }
+        { }
+
+        Scheme(Scheme&& other):
+            sfunc { move(other.sfunc) },
+            p { move(other.p) },
+            q { move(other.q) },
+            element_names { move(other.element_names) },
+            rt { move(other.rt) }
+        { }
 
         inline size_t all_count() const noexcept
         {
@@ -30,7 +60,7 @@ export namespace sr
         
         inline size_t processor_count() const noexcept
         {
-            return rt.get_processor_count();
+            return rt->get_processor_count();
         }
     };
 
@@ -109,7 +139,7 @@ namespace sr
                 {
                     for (const StateVector& sv1 : state_set)
                     {
-                        StateVector sv2 = scheme.rt.reconfigure_state(sv1);
+                        StateVector sv2 = scheme.rt->reconfigure_state(sv1);
 
                         bool scheme_state_sv1 { scheme.sfunc(sv1) };
                         bool scheme_state_sv2 { scheme.sfunc(sv2) };
