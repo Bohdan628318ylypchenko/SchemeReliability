@@ -16,7 +16,6 @@ using std::move;
 
 export namespace sr
 {
-
     struct Scheme
     {
         SFunc sfunc;

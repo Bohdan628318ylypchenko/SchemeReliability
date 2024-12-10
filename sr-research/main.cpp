@@ -6,7 +6,7 @@ using std::println;
 
 int main()
 {
-    println("=== simple ===\n");
+    println("=== simple ===");
     sr::research::simple();
 
     println("=== original v17 ===");

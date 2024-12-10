@@ -17,6 +17,7 @@ using std::function;
 using std::chrono::high_resolution_clock;
 using std::chrono::duration_cast;
 using std::chrono::seconds;
+using std::type_info;
 
 export namespace sr::research
 {
@@ -84,6 +85,49 @@ namespace sr::research
             
             return result;
         }
+
+        static ReconfigurationTable* create_log_brute_force(
+            size_t processor_count,
+            span<double> normal_load,
+            span<double> max_load,
+            vector<TransitionSet>& table,
+            SFunc sfunc
+        ) {
+            ReconfigurationTable* result
+            {
+                new BruteForceReconfigurationTable
+                {
+                    processor_count,
+                    span<double> { normal_load },
+                    span<double> { max_load },
+                    table,
+                    sfunc
+                }
+            };
+            println("rt type is {}", typeid(*result).name());
+            return result;
+        }
+
+        static ReconfigurationTable* create_log_greedy(
+            size_t processor_count,
+            span<double> normal_load,
+            span<double> max_load,
+            vector<TransitionSet> table
+        ) {
+            ReconfigurationTable* result
+            {
+                new GreedyReconfigurationTable
+                {
+                    processor_count,
+                    span<double> { normal_load },
+                    span<double> { max_load },
+                    table
+                }
+            };
+            println("rt type is {}", typeid(*result).name());
+            return result;
+        }
+
     };
 
     void simple()
@@ -117,14 +161,13 @@ namespace sr::research
             Harray<double> { p_values },
             Harray<double> { q_values },
             Harray<string> { element_names },
-            new BruteForceReconfigurationTable
-            {
+            Utils::create_log_brute_force(
                 processor_count,
                 span<double> { normal_load_values },
                 span<double> { max_load_values },
                 table,
                 sfunc
-            }
+            )
         };
 
         auto result
@@ -205,14 +248,13 @@ namespace sr::research
             Harray<double> { p_values },
             Harray<double> { q_values },
             Harray<string> { element_names },
-            new BruteForceReconfigurationTable
-            {
+            Utils::create_log_brute_force(
                 processor_count,
                 span<double> { normal_load_values },
                 span<double> { max_load_values },
                 table,
                 sfunc
-            }
+            )
         };
 
         auto result
@@ -313,13 +355,12 @@ namespace sr::research
             Harray<double> { p_values },
             Harray<double> { q_values },
             Harray<string> { element_names },
-            new GreedyReconfigurationTable
-            {
+            Utils::create_log_greedy(
                 processor_count,
                 span<double> { normal_load_values },
                 span<double> { max_load_values },
                 table
-            }
+            )
         };
 
         auto result
