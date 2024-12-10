@@ -2,16 +2,25 @@ import sr_research;
 
 import std;
 
-using std::println;
+using std::print;
 
 int main()
 {
-    println("=== simple ===");
+    print("\n=== simple ===\n");
     sr::research::simple();
 
-    println("=== original v17 ===");
+    print("\n=== original v17 ===\n");
     sr::research::v17_original();
 
-    println("=== v17 with rt ===");
-    sr::research::v17_rt();
+    print("\n=== v17 with medium rt (brute force) ===\n");
+    sr::research::v17_rt_medium_brute_force();
+
+    print("\n=== v17 with medium rt (greedy) ===\n");
+    sr::research::v17_rt_medium_greedy();
+
+    print("\n=== v17 with large rt (brute force) ===\n");
+    sr::research::v17_rt_large_brute_force();
+
+    print("\n=== v17 with large rt (greedy) ===\n");
+    sr::research::v17_rt_large_greedy();
 }
