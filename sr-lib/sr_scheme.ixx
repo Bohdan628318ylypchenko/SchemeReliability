@@ -142,10 +142,10 @@ namespace sr
 
                         bool scheme_state_sv1 { scheme.sfunc(sv1) };
                         bool scheme_state_sv2 { scheme.sfunc(sv2) };
-                        bool scheme_state { scheme_state_sv1 || scheme_state_sv2 };
+                        //bool scheme_state { scheme_state_sv1 || scheme_state_sv2 };
                         double probability { calculate_probability(scheme, sv1) };
 
-                        if (scheme_state)
+                        if (scheme_state_sv2)
                             sr.sp += probability;
                         else
                             sr.sq += probability;
@@ -157,7 +157,7 @@ namespace sr
                                 .probability = probability,
                                 .scheme_state_sv1 = scheme_state_sv1,
                                 .scheme_state_sv2 = scheme_state_sv2,
-                                .scheme_state = scheme_state
+                                .scheme_state = scheme_state_sv2
                             }
                         );
                     }
