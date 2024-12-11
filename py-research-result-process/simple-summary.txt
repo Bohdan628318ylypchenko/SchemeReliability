@@ -1,5 +1,0 @@
-sp = 0.6144000000000003, sq = 0.3856000000000002
-state count = 256
-element count = 8
-fail count per element (sv2):
-| p1 = 0 | p2 = 0 | p3 = 0 | p4 = 0 | c1 = 128 | d1 = 112 | d2 = 112 | c2 = 128 |
