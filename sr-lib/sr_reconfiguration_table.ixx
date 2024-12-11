@@ -120,7 +120,7 @@ export namespace sr
         {
             StateVector best;
             StateVector best_zero;
-            size_t best_zero_active_count;
+            long long best_zero_active_count;
         };
 
         bool traverse_reconfiguration_tree(
@@ -195,7 +195,7 @@ namespace sr
     {
         stack<size_t> failed_processors_indexes { };
         for (size_t i = 0; i < processor_count; i++)
-            if (sv1.processors[i] == 0)
+            if (sv1.processors[i] == 0 && !table[i].empty())
                 failed_processors_indexes.push(i);
         if (failed_processors_indexes.empty())
             return sv1;
@@ -207,7 +207,7 @@ namespace sr
         {
             .best = { },
             .best_zero = { },
-            .best_zero_active_count = 0
+            .best_zero_active_count = -1
         };
         bool is_success
         {
@@ -234,16 +234,21 @@ namespace sr
         if (failed_processor_indexes.empty())
         {
             StateVector sv2 { sv1 };
+
             for (size_t i = 0; i < processor_count; i++)
             {
                 if (sv1.processors[i] == 1 && reconfiguration_load[i] > max_load[i])
                 {
                     sv2.processors[i] = 0;
                 }
-                else if (sv1.processors[i] == 0 &&
-                         is_transition_successful(*applied_transitions[i], reconfiguration_load))
+            }
+
+            for (auto& [idx, applied_transition] : applied_transitions)
+            {
+                if (sv1.processors[idx] == 0 &&
+                    is_transition_successful(*applied_transition, reconfiguration_load))
                 {
-                    sv2.processors[i] = 1;
+                    sv2.processors[idx] = 1;
                 }
             }
 
@@ -254,7 +259,7 @@ namespace sr
             }
             else
             {
-                size_t current_active_count { static_cast<size_t>(count(sv2.processors.begin(), sv2.processors.end(), true)) };
+                long long current_active_count { static_cast<long long>(count(sv2.processors.begin(), sv2.processors.end(), true)) };
                 if (current_active_count > result.best_zero_active_count)
                 {
                     result.best_zero = move(sv2);
