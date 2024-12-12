@@ -166,7 +166,7 @@ export namespace sr
             const TransitionSet& transitions
         ) const;
 
-        double load_score(const Harray<double>& load) const;
+        double load_score(const Harray<double>& load, size_t transition_size) const;
     };
 }
 
@@ -359,7 +359,7 @@ namespace sr
 
             apply_transition_to_load(transition, temp_load.get_elements(), 1.0);
 
-            double score { load_score(temp_load) };
+            double score { load_score(temp_load, transition.size()) };
 
             score_transition[score] = &transition;
         }
@@ -369,10 +369,11 @@ namespace sr
             [](const pair<double, const Transition*>& a,
                const pair<double, const Transition*>& b)
             {
-                const auto& [s_a, t_a] = a;
-                const auto& [s_b, t_b] = b;
-                return s_a / (double)(t_a->size()) <
-                       s_b / (double)(t_b->size());
+                //const auto& [s_a, t_a] = a;
+                //const auto& [s_b, t_b] = b;
+                //return s_a / (double)(t_a->size()) <
+                //       s_b / (double)(t_b->size());
+                return a.first < b.first;
             }
         );
 
@@ -388,12 +389,17 @@ namespace sr
         }
     }
 
-    double GreedyReconfigurationTable::load_score(const Harray<double>& load) const
-    {
+    double GreedyReconfigurationTable::load_score(
+        const Harray<double>& load, size_t transition_size
+    ) const {
         double result { 0 };
         for (size_t i = 0; i < processor_count; i++)
-            result += load[i] / max_load[i];
-        result /= static_cast<double>(processor_count);
+        {
+            double temp { load[i] / max_load[i] };
+            if (temp > 1.0) temp *= 1e6;
+            result += temp;
+        }
+        result /= static_cast<double>(transition_size);
         return result;
     }
 }
