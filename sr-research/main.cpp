@@ -9,11 +9,11 @@ int main()
     //print("\n=== simple ===\n");
     //sr::research::simple();
 
-    print("\n=== original s23 ===\n");
-    sr::research::s23_original();
+    //print("\n=== original s23 ===\n");
+    //sr::research::s23_original();
 
-    //print("\n=== s23 with medium rt (brute force) ===\n");
-    //sr::research::s23_rt_medium_brute_force();
+    print("\n=== s23 with rt (7 7 7 8 8) ===\n");
+    sr::research::s23_rt_7_7_7_8_8();
 
     //print("\n=== s23 with medium rt (greedy) ===\n");
     //sr::research::s23_rt_medium_greedy();

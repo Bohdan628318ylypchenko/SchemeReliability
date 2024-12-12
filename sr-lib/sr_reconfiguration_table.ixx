@@ -82,7 +82,12 @@ export namespace sr
             double sign
         ) const;
 
+        bool is_transition_valid(
+            const StateVector& sv, const Transition& transition
+        ) const;
+
         bool is_transition_successful(
+            const StateVector& original_sv,
             const Transition& transition,
             const Harray<double>& reconfiguration_load
         ) const;
@@ -154,9 +159,10 @@ export namespace sr
 
     private:
 
-        optional<vector<IdxL>> update_reconfiguration_load(
+        optional<Transition> update_reconfiguration_load(
+            const StateVector& sv,
             Harray<double>& reconfiguration_load,
-            const vector<vector<IdxL>>& transitions
+            const TransitionSet& transitions
         ) const;
 
         double load_score(const Harray<double>& load) const;
@@ -176,16 +182,27 @@ namespace sr
             load[increment.index] += sign * increment.load;
     }
 
+    bool ReconfigurationTable::is_transition_valid(
+        const StateVector& sv, const Transition& transition
+    ) const {
+        if (transition.empty()) return false;
+        for (const auto& r : transition)
+        {
+            if (!sv.processors[r.index])
+                return false;
+        }
+        return true;
+    }
+
     bool ReconfigurationTable::is_transition_successful(
+        const StateVector& original_sv,
         const Transition& transition,
         const Harray<double>& reconfiguration_load
     ) const {
-        if (transition.empty())
-            return false;
-
+        if (transition.empty()) return false;
         for (const auto& r : transition)
         {
-            if (reconfiguration_load[r.index] > max_load[r.index])
+            if (!original_sv.processors[r.index] || (reconfiguration_load[r.index] > max_load[r.index]))
                 return false;
         }
         return true;
@@ -220,9 +237,13 @@ namespace sr
             )
         };
 
-        return is_success ? result.best : result.best_zero;
+        if (is_success)
+            return result.best;
+        else if (result.best_zero_active_count == -1)
+            return sv1;
+        else
+            return result.best_zero;
     }
-
 
     bool BruteForceReconfigurationTable::traverse_reconfiguration_tree(
         const StateVector& sv1,
@@ -246,7 +267,7 @@ namespace sr
             for (auto& [idx, applied_transition] : applied_transitions)
             {
                 if (sv1.processors[idx] == 0 &&
-                    is_transition_successful(*applied_transition, reconfiguration_load))
+                    is_transition_successful(sv1, *applied_transition, reconfiguration_load))
                 {
                     sv2.processors[idx] = 1;
                 }
@@ -273,16 +294,21 @@ namespace sr
         failed_processor_indexes.pop();
         for (const Transition& transition : table[current_processor_index])
         {
+            if (!is_transition_valid(sv1, transition))
+            {
+                if (traverse_reconfiguration_tree(
+                    sv1, failed_processor_indexes, applied_transitions, reconfiguration_load, result
+                )) return true;
+                else continue;
+            }
+
             applied_transitions[current_processor_index] = &transition;
             apply_transition_to_load(transition, reconfiguration_load, 1.0);
-            bool is_success
-            {
-                traverse_reconfiguration_tree(
-                    sv1, failed_processor_indexes, applied_transitions, reconfiguration_load, result
-                )
-            };
 
-            if (is_success) return true;
+            if (traverse_reconfiguration_tree(
+                sv1, failed_processor_indexes,
+                applied_transitions, reconfiguration_load, result
+            )) return true;
 
             apply_transition_to_load(transition, reconfiguration_load, -1.0);
             applied_transitions.erase(current_processor_index);
@@ -295,10 +321,10 @@ namespace sr
     {
         Harray<double> reconfiguration_load { normal_load };
 
-        unordered_map<size_t, optional<vector<IdxL>>> transitions { };
+        unordered_map<size_t, optional<Transition>> transitions { };
         for (size_t i = 0; i < processor_count; i++)
-            if (sv1.processors[i] == 0)
-                transitions[i] = update_reconfiguration_load(reconfiguration_load, table[i]);
+            if (sv1.processors[i] == 0 && !table[i].empty())
+                transitions[i] = update_reconfiguration_load(sv1, reconfiguration_load, table[i]);
 
         StateVector sv2 { sv1 };
         for (size_t i = 0; i < processor_count; i++)
@@ -308,7 +334,7 @@ namespace sr
                 sv2.processors[i] = 0;
             }
             else if (transitions[i].has_value() && sv1.processors[i] == 0 &&
-                     is_transition_successful(transitions[i].value(), reconfiguration_load))
+                     is_transition_successful(sv1, transitions[i].value(), reconfiguration_load))
             {
                 sv2.processors[i] = 1;
             }
@@ -316,15 +342,16 @@ namespace sr
         return sv2;
     }
 
-    optional<vector<IdxL>> GreedyReconfigurationTable::update_reconfiguration_load(
-        Harray<double>& reconfiguration_load, const vector<vector<IdxL>>& transitions
+    optional<Transition> GreedyReconfigurationTable::update_reconfiguration_load(
+        const StateVector& sv,
+        Harray<double>& reconfiguration_load, const TransitionSet& transitions
     ) const {
-        if (transitions.empty())
-            return nullopt;
-
-        unordered_map<double, const vector<IdxL>*> score_transition { };
-        for (const vector<IdxL>& transition : transitions)
+        unordered_map<double, const Transition*> score_transition { };
+        for (const Transition& transition : transitions)
         {
+            if (!is_transition_valid(sv, transition))
+                continue;
+
             Harray<double> temp_load { reconfiguration_load };
 
             apply_transition_to_load(transition, temp_load.get_elements(), 1.0);
@@ -344,7 +371,7 @@ namespace sr
 
         if (best_transition != score_transition.end())
         {
-            vector<IdxL> result { move(*(*best_transition).second) };
+            Transition result { move(*(*best_transition).second) };
             apply_transition_to_load(result, reconfiguration_load.get_elements(), 1.0);
             return result;
         }

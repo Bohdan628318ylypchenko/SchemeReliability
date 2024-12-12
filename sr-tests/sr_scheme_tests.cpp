@@ -13,6 +13,7 @@ using std::array;
 using std::vector;
 using std::fabs;
 using std::string;
+using std::count_if;
 
 namespace sr::tests
 {
@@ -66,10 +67,13 @@ namespace sr::tests
             SchemeReliability result { calculate_reliability(scheme) };
 
             Assert::AreEqual(static_cast<size_t>(256), result.scored_state_set.size());
-            Assert::IsTrue(fabs(result.sp - 0.6144) <= 1e-4);
-            Assert::IsTrue(fabs(result.sq - 0.3856) <= 1e-4);
+            Assert::IsTrue(fabs(result.sp - 0.60715008000000004) <= 1e-4);
+            Assert::IsTrue(fabs(result.sq - 0.39284992000000019) <= 1e-4);
             Assert::IsTrue(result.sp > result.sq);
             Assert::IsTrue(fabs(result.sp + result.sq - 1.0) <= 1e-5);
+            auto sv1_active_count { count_if(result.scored_state_set.begin(), result.scored_state_set.end(), [](const ScoredStateVector& ssv) { return ssv.scheme_state_sv1; }) };
+            auto sv2_active_count { count_if(result.scored_state_set.begin(), result.scored_state_set.end(), [](const ScoredStateVector& ssv) { return ssv.scheme_state_sv2; }) };
+            Assert::IsTrue(sv1_active_count <= sv2_active_count);
         }
 
         TEST_METHOD(calculate_scheme_reliability_greedy)
@@ -92,10 +96,13 @@ namespace sr::tests
             SchemeReliability result { calculate_reliability(scheme) };
 
             Assert::AreEqual(static_cast<size_t>(256), result.scored_state_set.size());
-            Assert::IsTrue(fabs(result.sp - 0.6144) <= 1e-4);
-            Assert::IsTrue(fabs(result.sq - 0.3856) <= 1e-4);
+            Assert::IsTrue(fabs(result.sp - 0.60715008000000004) <= 1e-4);
+            Assert::IsTrue(fabs(result.sq - 0.39284992000000019) <= 1e-4);
             Assert::IsTrue(result.sp > result.sq);
             Assert::IsTrue(fabs(result.sp + result.sq - 1.0) <= 1e-5);
+            auto sv1_active_count { count_if(result.scored_state_set.begin(), result.scored_state_set.end(), [](const ScoredStateVector& ssv) { return ssv.scheme_state_sv1; }) };
+            auto sv2_active_count { count_if(result.scored_state_set.begin(), result.scored_state_set.end(), [](const ScoredStateVector& ssv) { return ssv.scheme_state_sv2; }) };
+            Assert::IsTrue(sv1_active_count <= sv2_active_count);
         }
     };
 }
