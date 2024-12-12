@@ -10,7 +10,7 @@ using std::vector;
 using std::span;
 using std::thread;
 using std::string;
-using std::print;
+using std::println;
 using std::shared_ptr;
 using std::move;
 
@@ -92,8 +92,10 @@ namespace sr
     {
     private:
 
+        const unsigned int id;
+
         const Scheme& scheme;
-        const span<StateVector> state_set;
+        vector<StateVector> state_set;
         SchemeReliability sr;
 
         thread t;
@@ -111,11 +113,12 @@ namespace sr
         StateSetReliabilityCalculator() = default;
 
         StateSetReliabilityCalculator(
-            const Scheme& scheme,
-            const span<StateVector> state_set
+            unsigned int id,
+            const Scheme& scheme
         ):
+            id { id },
             scheme { scheme },
-            state_set { state_set },
+            state_set { },
             sr
             {
                 .scheme = scheme,
@@ -124,6 +127,11 @@ namespace sr
             },
             t { }
         { }
+
+        inline void assign_sv(StateVector& sv)
+        {
+            state_set.push_back(sv);
+        }
 
         inline const SchemeReliability& get_scheme_reliability() const noexcept
         {
@@ -142,7 +150,6 @@ namespace sr
 
                         bool scheme_state_sv1 { scheme.sfunc(sv1) };
                         bool scheme_state_sv2 { scheme.sfunc(sv2) };
-                        //bool scheme_state { scheme_state_sv1 || scheme_state_sv2 };
                         double probability { calculate_probability(scheme, sv1) };
 
                         if (scheme_state_sv2)
@@ -161,6 +168,7 @@ namespace sr
                             }
                         );
                     }
+                    println("worker {} done", id);
                 }
             };
         }
@@ -184,7 +192,7 @@ namespace sr
                 StateVectorGenerator { scheme.all_count(), scheme.processor_count() }.generate_full_2n_state_vector_set()
             };
 
-            print("full state set size = {}\n", full_state_set.size());
+            println("full state set size = {}", full_state_set.size());
 
             vector<StateSetReliabilityCalculator> workers
             {
@@ -193,7 +201,7 @@ namespace sr
                 )
             };
 
-            print("worker count = {}\n", workers.size());
+            println("worker count = {}", workers.size());
 
             for (StateSetReliabilityCalculator& w : workers)
                 w.execute(full_state_set.size());
@@ -201,7 +209,10 @@ namespace sr
             for (StateSetReliabilityCalculator& w : workers)
                 w.join();
 
-            return join_workers(scheme, workers, full_state_set.size(), scheme.all_count());
+
+            return join_workers(
+                scheme, workers, full_state_set.size(), scheme.all_count()
+            );
         }
 
     private:
@@ -210,38 +221,16 @@ namespace sr
             const Scheme& scheme,
             span<StateVector> state_set
         ) {
-            auto thread_count = thread::hardware_concurrency();
-
-            auto worker_state_set_size = state_set.size() / thread_count;
-            auto leftover = state_set.size() % thread_count;
+            auto thread_count = thread::hardware_concurrency() * 2;
 
             vector<StateSetReliabilityCalculator> result { };
             result.reserve(thread_count);
 
             for (unsigned int i = 0; i < thread_count; i++)
-            {
-                result.push_back(
-                    {
-                        scheme,
-                        state_set.subspan(
-                            i * worker_state_set_size,
-                            worker_state_set_size
-                        )
-                    }
-                );
-            }
-            if (leftover != 0)
-            {
-                result.push_back(
-                    {
-                        scheme,
-                        state_set.subspan(
-                            thread_count * worker_state_set_size,
-                            leftover
-                        )
-                    }
-                );
-            }
+                result.emplace_back(i, scheme);
+
+            for (size_t i = 0; i < state_set.size(); i++)
+                result[i % thread_count].assign_sv(state_set[i]);
 
             return result;
         }
