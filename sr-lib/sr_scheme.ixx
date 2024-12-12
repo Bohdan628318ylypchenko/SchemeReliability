@@ -221,7 +221,7 @@ namespace sr
             const Scheme& scheme,
             span<StateVector> state_set
         ) {
-            auto thread_count = thread::hardware_concurrency() * 2;
+            auto thread_count = thread::hardware_concurrency();
 
             vector<StateSetReliabilityCalculator> result { };
             result.reserve(thread_count);

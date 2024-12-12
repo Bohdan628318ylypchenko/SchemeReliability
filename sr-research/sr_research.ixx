@@ -408,20 +408,20 @@ namespace sr::research
         };
         Utils::process_scheme(gscheme, "s23-77788-greedy");
 
-        Scheme bscheme
-        {
-            sfunc,
-            span<double> { p_values },
-            span<double> { q_values },
-            span<string> { element_names },
-            Utils::create_log_brute_force(
-                processor_count,
-                span<double> { normal_load_values },
-                span<double> { max_load_values },
-                table,
-                sfunc
-            )
-        };
-        Utils::process_scheme(bscheme, "s23-77788-brute");
+        //Scheme bscheme
+        //{
+        //    sfunc,
+        //    span<double> { p_values },
+        //    span<double> { q_values },
+        //    span<string> { element_names },
+        //    Utils::create_log_brute_force(
+        //        processor_count,
+        //        span<double> { normal_load_values },
+        //        span<double> { max_load_values },
+        //        table,
+        //        sfunc
+        //    )
+        //};
+        //Utils::process_scheme(bscheme, "s23-77788-brute");
     }
 }

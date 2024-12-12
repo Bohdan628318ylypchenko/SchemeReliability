@@ -13,6 +13,7 @@ using std::move;
 using std::count;
 using std::min_element;
 using std::optional, std::nullopt;
+using std::pair;
 
 export namespace sr
 {
@@ -325,6 +326,8 @@ namespace sr
         for (size_t i = 0; i < processor_count; i++)
             if (sv1.processors[i] == 0 && !table[i].empty())
                 transitions[i] = update_reconfiguration_load(sv1, reconfiguration_load, table[i]);
+        if (transitions.empty())
+            return sv1;
 
         StateVector sv2 { sv1 };
         for (size_t i = 0; i < processor_count; i++)
@@ -363,9 +366,13 @@ namespace sr
 
         auto best_transition = min_element(
             score_transition.begin(), score_transition.end(),
-            [](const auto& a, const auto& b)
+            [](const pair<double, const Transition*>& a,
+               const pair<double, const Transition*>& b)
             {
-                return a.first < b.first;
+                const auto& [s_a, t_a] = a;
+                const auto& [s_b, t_b] = b;
+                return s_a / (double)(t_a->size()) <
+                       s_b / (double)(t_b->size());
             }
         );
 
