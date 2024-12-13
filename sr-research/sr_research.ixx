@@ -48,7 +48,12 @@ namespace sr::research
                 return;
             }
 
-            const size_t bufsize { 16512 };
+            const size_t bufsize
+            {
+                scored_state_set.size() < 512 ?
+                128 * scored_state_set.at(0).sv1.all.size() * sizeof(bool) :
+                scored_state_set.size() / 512 * scored_state_set.at(0).sv1.all.size() * sizeof(bool)
+            };
             unique_ptr<char[]> buffer { new char[bufsize] };
             data_file.rdbuf()->pubsetbuf(buffer.get(), bufsize);
 
@@ -687,20 +692,20 @@ namespace sr::research
         };
         Utils::process_scheme(gscheme, "s25-77788-3-right-greedy");
 
-        Scheme bscheme
-        {
-            sfunc,
-            span<double> { p_values },
-            span<double> { q_values },
-            span<string> { element_names },
-            Utils::create_log_brute_force(
-                processor_count,
-                span<double> { normal_load_values },
-                span<double> { max_load_values },
-                table,
-                sfunc
-            )
-        };
-        Utils::process_scheme(bscheme, "s25-77788-3-right-brute");
+        //Scheme bscheme
+        //{
+        //    sfunc,
+        //    span<double> { p_values },
+        //    span<double> { q_values },
+        //    span<string> { element_names },
+        //    Utils::create_log_brute_force(
+        //        processor_count,
+        //        span<double> { normal_load_values },
+        //        span<double> { max_load_values },
+        //        table,
+        //        sfunc
+        //    )
+        //};
+        //Utils::process_scheme(bscheme, "s25-77788-3-right-brute");
     }
 }
