@@ -95,7 +95,8 @@ namespace sr
         const unsigned int id;
 
         const Scheme& scheme;
-        vector<StateVector> state_set;
+        span<StateVector> state_set;
+        vector<size_t> state_set_indexes;
         SchemeReliability sr;
 
         thread t;
@@ -114,11 +115,13 @@ namespace sr
 
         StateSetReliabilityCalculator(
             unsigned int id,
-            const Scheme& scheme
+            const Scheme& scheme,
+            span<StateVector> state_set
         ):
             id { id },
             scheme { scheme },
-            state_set { },
+            state_set { state_set },
+            state_set_indexes { },
             sr
             {
                 .scheme = scheme,
@@ -128,9 +131,9 @@ namespace sr
             t { }
         { }
 
-        inline void assign_sv(StateVector& sv)
+        inline void assign_sv_by_index(size_t sv_index)
         {
-            state_set.push_back(sv);
+            state_set_indexes.push_back(sv_index);
         }
 
         inline const SchemeReliability& get_scheme_reliability() const noexcept
@@ -144,8 +147,10 @@ namespace sr
             {
                 [this, full_state_set_size]()
                 {
-                    for (const StateVector& sv1 : state_set)
+                    for (const size_t sv1_index : state_set_indexes)
                     {
+                        const StateVector& sv1 { state_set[sv1_index] };
+
                         StateVector sv2 = scheme.rt->reconfigure_state(sv1);
 
                         bool scheme_state_sv1 { scheme.sfunc(sv1) };
@@ -227,10 +232,10 @@ namespace sr
             result.reserve(thread_count);
 
             for (unsigned int i = 0; i < thread_count; i++)
-                result.emplace_back(i, scheme);
+                result.emplace_back(i, scheme, state_set);
 
             for (size_t i = 0; i < state_set.size(); i++)
-                result[i % thread_count].assign_sv(state_set[i]);
+                result[i % thread_count].assign_sv_by_index(i);
 
             return result;
         }

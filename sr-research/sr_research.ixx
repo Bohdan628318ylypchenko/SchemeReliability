@@ -25,6 +25,8 @@ export namespace sr::research
     void s23_original();
     void s23_rt_7_7_7_8_8();
     void s23_rt_7_7_7_8_8_1_modified_connections();
+    void s24_rt_7_7_7_8_8_2_right();
+    void s25_rt_7_7_7_8_8_3_right();
 }
 
 module : private;
@@ -46,21 +48,12 @@ namespace sr::research
                 return;
             }
 
-            const size_t bufsize { 8768 };
+            const size_t bufsize { 16512 };
             unique_ptr<char[]> buffer { new char[bufsize] };
             data_file.rdbuf()->pubsetbuf(buffer.get(), bufsize);
 
-            size_t tmp { 23 };
             for (const ScoredStateVector& ssv : scored_state_set)
             {
-                if (ssv.sv1.all.size() != tmp)
-                {
-                    println("wtf1");
-                }
-                if (ssv.sv2.all.size() != tmp)
-                {
-                    println("wtf2 | {}", ssv.sv2.all.size());
-                }
                 data_file.write(reinterpret_cast<const char*>(&ssv.scheme_state_sv1), sizeof(bool));
                 data_file.write(reinterpret_cast<const char*>(&ssv.scheme_state_sv2), sizeof(bool));
                 data_file.write(reinterpret_cast<const char*>(&ssv.scheme_state), sizeof(bool));
@@ -172,6 +165,8 @@ namespace sr::research
                     [&scheme]() { return calculate_reliability(scheme); }
                 )
             };
+
+            println("output_name = {}", output_name);
 
             Utils::dump_text_summary(result);
 
@@ -517,5 +512,195 @@ namespace sr::research
         //    )
         //};
         //Utils::process_scheme(bscheme, "s23-77788-brute");
+    }
+
+    void s24_rt_7_7_7_8_8_2_right()
+    {
+        const size_t all_count { 24 };
+        const size_t processor_count { 5 };
+
+        array<double, processor_count> normal_load_values { 50, 50, 50, 30, 30 };
+        array<double, processor_count> max_load_values { 100, 100, 100, 60, 60 };
+
+        vector<TransitionSet> table
+        {
+            { { IdxL { 1, 50 } }, { IdxL { 2, 50 } }, { IdxL { 1, 25 }, IdxL { 2, 25 } }, { IdxL { 1, 25 }, IdxL { 3, 30 } }, { IdxL { 1, 25 }, IdxL { 4, 30 } }, { IdxL { 2, 25 }, IdxL { 3, 30 } }, { IdxL { 2, 25 }, IdxL { 4, 30 } } },
+            { { IdxL { 0, 50 } }, { IdxL { 2, 50 } }, { IdxL { 0, 25 }, IdxL { 2, 25 } }, { IdxL { 0, 25 }, IdxL { 3, 30 } }, { IdxL { 0, 25 }, IdxL { 4, 30 } }, { IdxL { 2, 25 }, IdxL { 3, 30 } }, { IdxL { 2, 25 }, IdxL { 4, 30 } } },
+            { { IdxL { 0, 50 } }, { IdxL { 1, 50 } }, { IdxL { 0, 25 }, IdxL { 1, 25 } }, { IdxL { 0, 25 }, IdxL { 3, 30 } }, { IdxL { 0, 25 }, IdxL { 4, 30 } }, { IdxL { 1, 25 }, IdxL { 3, 30 } }, { IdxL { 1, 25 }, IdxL { 4, 30 } } },
+            { { IdxL { 4, 30 } }, { IdxL { 0, 35 } }, { IdxL { 1, 35 } }, { IdxL { 2, 35 } }, { IdxL { 0, 18 }, IdxL { 1, 18 } }, { IdxL { 1, 18 }, IdxL { 2, 18 } }, { IdxL { 0, 18 }, IdxL { 2, 18 } }, { IdxL { 0, 12 }, IdxL { 1, 12 }, IdxL { 2, 12 } } },
+            { { IdxL { 3, 30 } }, { IdxL { 0, 35 } }, { IdxL { 1, 35 } }, { IdxL { 2, 35 } }, { IdxL { 0, 18 }, IdxL { 1, 18 } }, { IdxL { 1, 18 }, IdxL { 2, 18 } }, { IdxL { 0, 18 }, IdxL { 2, 18 } }, { IdxL { 0, 12 }, IdxL { 1, 12 }, IdxL { 2, 12 } } },
+        };
+
+        array<string, all_count> element_names
+        {
+            "pr1" /* 0 */, "pr2" /* 1 */, "pr3" /* 2 */, "pr5" /* 3 */, "pr6" /* 4 */,
+            "a1" /* 5 */, "a2" /* 6 */,
+            "b1" /* 7 */, "b2" /* 8 */, "b4" /* 9 */, "b5" /* 10 */,
+            "c1", /* 11 */ "c2" /* 12 */, "c4" /* 13 */, "c5" /* 14 */, "c6" /* 15 */,
+            "d1", /* 16 */ "d2" /* 17 */, "d3" /* 18 */, "d6" /* 19 */, "d8" /* 20 */,
+            "m1" /* 21 */, "m2" /* 22 */,
+            "d9" /* 23 */
+        };
+
+        const double qpr { 1.2e-4 };
+        const double qpa { 1.2e-4 };
+        const double qpb { 1.5e-5 };
+        const double qpc { 4.1e-4 };
+        const double qpd { 2.2e-5 };
+        const double qpm { 3.6e-4 };
+
+        array<double, all_count> q_values
+        {
+            qpr, qpr, qpr, qpr, qpr,
+            qpa, qpa,
+            qpb, qpb, qpb, qpb,
+            qpc, qpc, qpc, qpc, qpc,
+            qpd, qpd, qpd, qpd, qpd,
+            qpm, qpm,
+            qpd
+        };
+
+        array<double, all_count> p_values { };
+        for (size_t i = 0; i < all_count; i++)
+            p_values[i] = 1.0 - q_values[i];
+
+        auto sfunc = [](const StateVector& sv)
+        {
+            span<bool> s = sv.all;
+
+            bool f1 = (s[16] + s[17] + s[18] + s[19]) * (s[11] + s[12] + s[13]) * (s[7] + s[8]);
+            bool f3 = s[0] * s[1] * s[2];
+            bool f4 = (s[20] + s[23]) * (s[14] + s[15]) * (s[9] + s[10]);
+            bool f5 = s[3] * s[4];
+            bool f6 = s[5] * s[6] * (s[21] + s[22]);
+
+            return f1 * f3 * f4 * f5 * f6;
+        };
+
+        Scheme gscheme
+        {
+            sfunc,
+            span<double> { p_values },
+            span<double> { q_values },
+            span<string> { element_names },
+            Utils::create_log_greedy(
+                processor_count,
+                span<double> { normal_load_values },
+                span<double> { max_load_values },
+                table
+            )
+        };
+        Utils::process_scheme(gscheme, "s24-77788-2-right-greedy");
+
+        //Scheme bscheme
+        //{
+        //    sfunc,
+        //    span<double> { p_values },
+        //    span<double> { q_values },
+        //    span<string> { element_names },
+        //    Utils::create_log_brute_force(
+        //        processor_count,
+        //        span<double> { normal_load_values },
+        //        span<double> { max_load_values },
+        //        table,
+        //        sfunc
+        //    )
+        //};
+        //Utils::process_scheme(bscheme, "s23-77788-brute");
+    }
+
+    void s25_rt_7_7_7_8_8_3_right()
+    {
+        const size_t all_count { 25 };
+        const size_t processor_count { 5 };
+
+        array<double, processor_count> normal_load_values { 50, 50, 50, 30, 30 };
+        array<double, processor_count> max_load_values { 100, 100, 100, 60, 60 };
+
+        vector<TransitionSet> table
+        {
+            { { IdxL { 1, 50 } }, { IdxL { 2, 50 } }, { IdxL { 1, 25 }, IdxL { 2, 25 } }, { IdxL { 1, 25 }, IdxL { 3, 30 } }, { IdxL { 1, 25 }, IdxL { 4, 30 } }, { IdxL { 2, 25 }, IdxL { 3, 30 } }, { IdxL { 2, 25 }, IdxL { 4, 30 } } },
+            { { IdxL { 0, 50 } }, { IdxL { 2, 50 } }, { IdxL { 0, 25 }, IdxL { 2, 25 } }, { IdxL { 0, 25 }, IdxL { 3, 30 } }, { IdxL { 0, 25 }, IdxL { 4, 30 } }, { IdxL { 2, 25 }, IdxL { 3, 30 } }, { IdxL { 2, 25 }, IdxL { 4, 30 } } },
+            { { IdxL { 0, 50 } }, { IdxL { 1, 50 } }, { IdxL { 0, 25 }, IdxL { 1, 25 } }, { IdxL { 0, 25 }, IdxL { 3, 30 } }, { IdxL { 0, 25 }, IdxL { 4, 30 } }, { IdxL { 1, 25 }, IdxL { 3, 30 } }, { IdxL { 1, 25 }, IdxL { 4, 30 } } },
+            { { IdxL { 4, 30 } }, { IdxL { 0, 35 } }, { IdxL { 1, 35 } }, { IdxL { 2, 35 } }, { IdxL { 0, 18 }, IdxL { 1, 18 } }, { IdxL { 1, 18 }, IdxL { 2, 18 } }, { IdxL { 0, 18 }, IdxL { 2, 18 } }, { IdxL { 0, 12 }, IdxL { 1, 12 }, IdxL { 2, 12 } } },
+            { { IdxL { 3, 30 } }, { IdxL { 0, 35 } }, { IdxL { 1, 35 } }, { IdxL { 2, 35 } }, { IdxL { 0, 18 }, IdxL { 1, 18 } }, { IdxL { 1, 18 }, IdxL { 2, 18 } }, { IdxL { 0, 18 }, IdxL { 2, 18 } }, { IdxL { 0, 12 }, IdxL { 1, 12 }, IdxL { 2, 12 } } },
+        };
+
+        array<string, all_count> element_names
+        {
+            "pr1" /* 0 */, "pr2" /* 1 */, "pr3" /* 2 */, "pr5" /* 3 */, "pr6" /* 4 */,
+            "a1" /* 5 */, "a2" /* 6 */,
+            "b1" /* 7 */, "b2" /* 8 */, "b4" /* 9 */, "b5" /* 10 */,
+            "c1", /* 11 */ "c2" /* 12 */, "c4" /* 13 */, "c5" /* 14 */, "c6" /* 15 */,
+            "d1", /* 16 */ "d2" /* 17 */, "d3" /* 18 */, "d6" /* 19 */, "d8" /* 20 */,
+            "m1" /* 21 */, "m2" /* 22 */,
+            "d9" /* 23 */, "d10" /* 24 */
+        };
+
+        const double qpr { 1.2e-4 };
+        const double qpa { 1.2e-4 };
+        const double qpb { 1.5e-5 };
+        const double qpc { 4.1e-4 };
+        const double qpd { 2.2e-5 };
+        const double qpm { 3.6e-4 };
+
+        array<double, all_count> q_values
+        {
+            qpr, qpr, qpr, qpr, qpr,
+            qpa, qpa,
+            qpb, qpb, qpb, qpb,
+            qpc, qpc, qpc, qpc, qpc,
+            qpd, qpd, qpd, qpd, qpd,
+            qpm, qpm,
+            qpd, qpd
+        };
+
+        array<double, all_count> p_values { };
+        for (size_t i = 0; i < all_count; i++)
+            p_values[i] = 1.0 - q_values[i];
+
+        auto sfunc = [](const StateVector& sv)
+        {
+            span<bool> s = sv.all;
+
+            bool f1 = (s[16] + s[17] + s[18] + s[19]) * (s[11] + s[12] + s[13]) * (s[7] + s[8]);
+            bool f3 = s[0] * s[1] * s[2];
+            bool f4 = (s[20] + s[23] + s[24]) * (s[14] + s[15]) * (s[9] + s[10]);
+            bool f5 = s[3] * s[4];
+            bool f6 = s[5] * s[6] * (s[21] + s[22]);
+
+            return f1 * f3 * f4 * f5 * f6;
+        };
+
+        Scheme gscheme
+        {
+            sfunc,
+            span<double> { p_values },
+            span<double> { q_values },
+            span<string> { element_names },
+            Utils::create_log_greedy(
+                processor_count,
+                span<double> { normal_load_values },
+                span<double> { max_load_values },
+                table
+            )
+        };
+        Utils::process_scheme(gscheme, "s25-77788-3-right-greedy");
+
+        Scheme bscheme
+        {
+            sfunc,
+            span<double> { p_values },
+            span<double> { q_values },
+            span<string> { element_names },
+            Utils::create_log_brute_force(
+                processor_count,
+                span<double> { normal_load_values },
+                span<double> { max_load_values },
+                table,
+                sfunc
+            )
+        };
+        Utils::process_scheme(bscheme, "s25-77788-3-right-brute");
     }
 }
