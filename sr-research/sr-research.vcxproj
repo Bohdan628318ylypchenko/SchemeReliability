@@ -139,7 +139,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="sr_research.ixx" />
+    <ClCompile Include="research.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\sr-lib\sr-lib.vcxproj">

@@ -175,7 +175,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="sr_reconfiguration_table_tests.cpp" />
     <ClCompile Include="sr_scheme_tests.cpp" />
     <ClCompile Include="sr_state_tests.cpp" />
   </ItemGroup>

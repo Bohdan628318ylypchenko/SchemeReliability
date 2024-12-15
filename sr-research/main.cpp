@@ -1,28 +1,27 @@
-import sr_research;
+import research;
 
 import std;
-
 using std::print;
 
 int main()
 {
-    //print("\n=== simple ===\n");
-    //sr::research::simple();
-
     //print("\n=== original s23 ===\n");
-    //sr::research::s23_original();
+    //research::s23_original();
 
     //print("\n=== s23 with rt (7 7 7 8 8) ===\n");
-    //sr::research::s23_rt_7_7_7_8_8();
+    //research::s23_rt_7_7_7_8_8();
 
-    //print("\n=== s23 with rt 1: modified connections ===\n");
-    //sr::research::s23_rt_7_7_7_8_8_1_modified_connections();
+    //print("\n=== s23 with rt and modified connections ===\n");
+    //research::s23_rt_7_7_7_8_8_modified_connections();
 
-    //print("\n=== s24 with rt 2: right ===\n");
-    //sr::research::s24_rt_7_7_7_8_8_2_right();
+    //print("\n=== s24 with d9 right ===\n");
+    //research::s24_d9_right();
 
-    print("\n=== s25 with rt 2: right ===\n");
-    sr::research::s25_rt_7_7_7_8_8_3_right();
+    //print("\n=== s25 with d9 d10 right ===\n");
+    //research::s25_d9_d10_right();
+
+    print("\n=== s27 with d9 d10 c7 right c8 left ===\n");
+    research::s27_d9_d10_c7_right_c8_left();
 
     return 0;
 }

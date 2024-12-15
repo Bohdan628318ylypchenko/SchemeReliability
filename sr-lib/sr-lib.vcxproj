@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="sr_aliases.ixx" />
-    <ClCompile Include="sr_harray.ixx" />
-    <ClCompile Include="sr_reconfiguration_table.ixx" />
-    <ClCompile Include="sr_scheme.ixx" />
-    <ClCompile Include="sr_state.ixx" />
+    <ClCompile Include="scheme_reliability.ixx" />
+    <ClCompile Include="algorithm.ixx" />
+    <ClCompile Include="model.ixx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="atomicops.h" />
+    <ClInclude Include="readwritequeue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

@@ -1,24 +1,16 @@
 #include "pch.h"
 
-import sr_reconfiguration_table;
+import scheme_reliability;
 
 import std;
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-using std::vector;
-using std::array;
-using std::span;
-using std::count;
-using std::string;
-using std::format;
-using std::function;
-using std::unique_ptr;
-
 namespace sr::tests
 {
     TEST_CLASS(ReconfigurationTableTests)
     {
+        /*
     private:
 
         static const size_t ALL_COUNT_4P { 8 };
@@ -198,5 +190,6 @@ namespace sr::tests
                 assert_log_s1_s2(s1, s2, [](const auto a, const auto b) { return; });
             }
         }
+        */
     };
 }

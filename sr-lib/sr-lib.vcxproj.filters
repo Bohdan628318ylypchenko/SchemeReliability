@@ -1,10 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="sr_state.ixx" />
-    <ClCompile Include="sr_reconfiguration_table.ixx" />
-    <ClCompile Include="sr_scheme.ixx" />
-    <ClCompile Include="sr_harray.ixx" />
-    <ClCompile Include="sr_aliases.ixx" />
+    <ClCompile Include="model.ixx" />
+    <ClCompile Include="algorithm.ixx" />
+    <ClCompile Include="scheme_reliability.ixx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="queue">
+      <UniqueIdentifier>{aa608ab2-2148-440a-b131-ffaa9e8c59d8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="atomicops.h">
+      <Filter>queue</Filter>
+    </ClInclude>
+    <ClInclude Include="readwritequeue.h">
+      <Filter>queue</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
