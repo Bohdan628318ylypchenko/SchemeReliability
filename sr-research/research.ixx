@@ -23,6 +23,7 @@ export namespace research
     void s24_d9_right();
     void s25_d9_d10_right();
     void s27_d9_d10_c7_right_c8_left();
+    void s29_d9_d10_c7_right_c8_left_a4();
 }
 
 module : private;
@@ -851,11 +852,143 @@ namespace research
             }
         };
 
-        scheme.scheme_name = "s27-d9-d10-right-c8-left-greedy";
+        scheme.scheme_name = "s27-d9-d10-c7-right-c8-left-greedy";
         scheme.type = SchemeType::Greedy;
         Utils::process_scheme(scheme);
 
-        scheme.scheme_name = "s27-d9-d10-right-c8-left-brute";
+        scheme.scheme_name = "s27-d9-d10-c7-right-c8-left-brute";
+        scheme.type = SchemeType::Brute;
+        Utils::process_scheme(scheme);
+    }
+
+    void s29_d9_d10_c7_right_c8_left_a4()
+    {
+        constexpr size_t all_count { 29 };
+        constexpr size_t processor_count { 5 };
+
+        SchemeDto<all_count, processor_count> scheme
+        {
+            .elements =
+            {
+                ElementDto { .name = "a1", .p = ppa, .q = qpa },
+                ElementDto { .name = "a2", .p = ppa, .q = qpa },
+                ElementDto { .name = "b1", .p = ppb, .q = qpb },
+                ElementDto { .name = "b2", .p = ppb, .q = qpb },
+                ElementDto { .name = "b4", .p = ppb, .q = qpb },
+                ElementDto { .name = "b5", .p = ppb, .q = qpb },
+                ElementDto { .name = "c1", .p = ppc, .q = qpc },
+                ElementDto { .name = "c2", .p = ppc, .q = qpc },
+                ElementDto { .name = "c4", .p = ppc, .q = qpc },
+                ElementDto { .name = "c5", .p = ppc, .q = qpc },
+                ElementDto { .name = "c6", .p = ppc, .q = qpc },
+                ElementDto { .name = "d1", .p = ppd, .q = qpd },
+                ElementDto { .name = "d2", .p = ppd, .q = qpd },
+                ElementDto { .name = "d3", .p = ppd, .q = qpd },
+                ElementDto { .name = "d6", .p = ppd, .q = qpd },
+                ElementDto { .name = "d8", .p = ppd, .q = qpd },
+                ElementDto { .name = "m1", .p = ppm, .q = qpm },
+                ElementDto { .name = "m2", .p = ppm, .q = qpm },
+                ElementDto { .name = "d9", .p = ppd, .q = qpd },
+                ElementDto { .name = "d10", .p = ppd, .q = qpd },
+                ElementDto { .name = "c7", .p = ppc, .q = qpc },
+                ElementDto { .name = "c8", .p = ppc, .q = qpc },
+                ElementDto { .name = "a3", .p = ppa, .q = qpa },
+                ElementDto { .name = "a4", .p = ppa, .q = qpa }
+            },
+            .processors =
+            {
+                ProcessorDto
+                {
+                    .name = "pr1", .p = ppr, .q = qpr, .normal_load = 50, .max_load = 100,
+                    .transitions =
+                    {
+                        { TrUnit { 1, 50 } },
+                        { TrUnit { 2, 50 } },
+                        { TrUnit { 1, 25 }, TrUnit { 2, 25 } },
+                        { TrUnit { 1, 25 }, TrUnit { 3, 30 } },
+                        { TrUnit { 1, 25 }, TrUnit { 4, 30 } },
+                        { TrUnit { 2, 25 }, TrUnit { 3, 30 } },
+                        { TrUnit { 2, 25 }, TrUnit { 4, 30 } }
+                    }
+                },
+                ProcessorDto
+                {
+                    .name = "pr2", .p = ppr, .q = qpr, .normal_load = 50, .max_load = 100,
+                    .transitions =
+                    {
+                        { TrUnit { 0, 50 } },
+                        { TrUnit { 2, 50 } },
+                        { TrUnit { 0, 25 }, TrUnit { 2, 25 } },
+                        { TrUnit { 0, 25 }, TrUnit { 3, 30 } },
+                        { TrUnit { 0, 25 }, TrUnit { 4, 30 } },
+                        { TrUnit { 2, 25 }, TrUnit { 3, 30 } },
+                        { TrUnit { 2, 25 }, TrUnit { 4, 30 } }
+                    }
+                },
+                ProcessorDto
+                {
+                    .name = "pr3", .p = ppr, .q = qpr, .normal_load = 50, .max_load = 100,
+                    .transitions =
+                    {
+                        { TrUnit { 0, 50 } },
+                        { TrUnit { 1, 50 } },
+                        { TrUnit { 0, 25 }, TrUnit { 1, 25 } },
+                        { TrUnit { 0, 25 }, TrUnit { 3, 30 } },
+                        { TrUnit { 0, 25 }, TrUnit { 4, 30 } },
+                        { TrUnit { 1, 25 }, TrUnit { 3, 30 } },
+                        { TrUnit { 1, 25 }, TrUnit { 4, 30 } }
+                    }
+                },
+                ProcessorDto
+                {
+                    .name = "pr4", .p = ppr, .q = qpr, .normal_load = 30, .max_load = 60,
+                    .transitions =
+                    {
+                        { TrUnit { 4, 30 } },
+                        { TrUnit { 0, 35 } },
+                        { TrUnit { 1, 35 } },
+                        { TrUnit { 2, 35 } },
+                        { TrUnit { 0, 18 }, TrUnit { 1, 18 } },
+                        { TrUnit { 1, 18 }, TrUnit { 2, 18 } },
+                        { TrUnit { 0, 18 }, TrUnit { 2, 18 } },
+                        { TrUnit { 0, 12 }, TrUnit { 1, 12 }, TrUnit { 2, 12 } }
+                    }
+                },
+                ProcessorDto
+                {
+                    .name = "pr5", .p = ppr, .q = qpr, .normal_load = 30, .max_load = 60,
+                    .transitions =
+                    {
+                        { TrUnit { 3, 30 } },
+                        { TrUnit { 0, 35 } },
+                        { TrUnit { 1, 35 } },
+                        { TrUnit { 2, 35 } },
+                        { TrUnit { 0, 18 }, TrUnit { 1, 18 } },
+                        { TrUnit { 1, 18 }, TrUnit { 2, 18 } },
+                        { TrUnit { 0, 18 }, TrUnit { 2, 18 } },
+                        { TrUnit { 0, 12 }, TrUnit { 1, 12 }, TrUnit { 2, 12 } }
+                    }
+                }
+            },
+            .scheme_function = [](const StateVectorDto<all_count, processor_count>& sv)
+            {
+                span<bool> s = sv.all;
+
+                bool f1 = (s[16] + s[17] + s[18] + s[19]) * (s[11] + s[12] + s[13] + s[26]) * (s[7] + s[8]);
+                bool f3 = s[0] * s[1] * s[2];
+                bool f4 = (s[20] + s[23] + s[24]) * (s[14] + s[15] + s[25]) * (s[9] + s[10]);
+                bool f5 = s[3] * s[4];
+                bool f6 = (s[5] + s[27]) * (s[6] + s[28]) * (s[21] + s[22]);
+
+                return f1 * f3 * f4 * f5 * f6;
+            }
+        };
+
+        scheme.scheme_name = "s29-d9-d10-c7-right-c8-left-a4-greedy";
+        scheme.type = SchemeType::Greedy;
+        Utils::process_scheme(scheme);
+
+        scheme.scheme_name = "s29-d9-d10-c7-right-c8-left-a4-brute";
         scheme.type = SchemeType::Brute;
         Utils::process_scheme(scheme);
     }
