@@ -181,7 +181,7 @@ namespace sr_impl::algorithm
         ) const {
             if (failed_processor_indexes.empty())
             {
-                StateVector sv2 { sv1 };
+                StateVector<all_count, processor_count> sv2 { sv1 };
 
                 for (size_t i = 0; i < processor_count; i++)
                 {

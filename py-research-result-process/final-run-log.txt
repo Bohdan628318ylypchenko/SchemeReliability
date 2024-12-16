@@ -1,0 +1,100 @@
+PS C:\Users\Administrator\SchemeReliability\x64\Release> .\sr-research.exe
+
+=== original s23 ===
+
+Scheme type = greedy
+time = 3
+path = s23-original-greedy
+sp = 0.9990208569798796, sq = 0.000979143020119051
+state count = 8388608
+
+Scheme type = brute
+time = 3
+path = s23-original-brute
+sp = 0.9990208569798796, sq = 0.000979143020119051
+state count = 8388608
+
+=== s23 with rt (7 7 7 8 8) ===
+
+Scheme type = greedy
+time = 2
+path = s23-77788-greedy
+sp = 0.9992607082975051, sq = 0.0007392917024915616
+state count = 8388608
+
+Scheme type = brute
+time = 18
+path = s23-77788-brute
+sp = 0.9992607082975051, sq = 0.0007392917024915616
+state count = 8388608
+
+=== s23 with rt and modified connections ===
+
+Scheme type = greedy
+time = 3
+path = s23-77788-modified-connections-greedy
+sp = 0.999737721521635, sq = 0.0002622784783607316
+state count = 8388608
+
+Scheme type = brute
+time = 13
+path = s23-77788-modified-connections-brute
+sp = 0.999737721521635, sq = 0.0002622784783607316
+state count = 8388608
+
+=== s24 with d9 right ===
+
+Scheme type = greedy
+time = 1
+path = s24-d9-right-greedy
+sp = 0.9997597157515095, sq = 0.00024028424848725232
+state count = 16777216
+
+Scheme type = brute
+time = 35
+path = s24-d9-right-brute
+sp = 0.9997597157515095, sq = 0.00024028424848725232
+state count = 16777216
+
+=== s25 with d9 d10 right ===
+
+Scheme type = greedy
+time = 8
+path = s25-d9-d10-right-greedy
+sp = 0.9997597162353798, sq = 0.00024028376461419955
+state count = 33554432
+
+Scheme type = brute
+time = 61
+path = s25-d9-d10-right-brute
+sp = 0.9997597162353798, sq = 0.00024028376461419955
+state count = 33554432
+
+=== s27 with d9 d10 c7 right c8 left ===
+
+Scheme type = greedy
+time = 77
+path = s27-d9-d10-c7-right-c8-left-greedy
+sp = 0.9997598842949585, sq = 0.00024011570500589362
+state count = 134217728
+
+Scheme type = brute
+time = 220
+path = s27-d9-d10-c7-right-c8-left-brute
+sp = 0.9997598842949585, sq = 0.00024011570500589362
+state count = 134217728
+
+=== s29 with d9 d10 c7 right c8 left a4 ===
+
+Scheme type = greedy
+time = 397
+path = s29-d9-d10-c7-right-c8-left-a4-greedy
+sp = 0.999999841063663, sq = 1.5893623277066473e-07
+state count = 536870912
+
+Scheme type = brute
+time = 1022
+path = s29-d9-d10-c7-right-c8-left-a4-brute
+sp = 0.999999841063663, sq = 1.5893623277066473e-07
+state count = 536870912
+PS C:\Users\Administrator\SchemeReliability\x64\Release>
