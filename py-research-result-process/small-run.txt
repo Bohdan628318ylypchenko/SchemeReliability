@@ -1,0 +1,72 @@
+PS C:\Users\Bohdan\Programming\labs-5-1\SchemeReliability\x64\Release> .\sr-research.exe
+
+=== original s23 ===
+
+Scheme type = greedy
+time = 4
+path = s23-original-greedy
+sp = 0.9990208569798784, sq = 0.0009791430201189963
+state count = 8388608
+
+Scheme type = brute
+time = 3
+path = s23-original-brute
+sp = 0.9990208569798784, sq = 0.0009791430201189963
+state count = 8388608
+
+=== s23 with rt (7 7 7 8 8) ===
+
+Scheme type = greedy
+time = 9
+path = s23-77788-greedy
+sp = 0.9992607082975018, sq = 0.0007392917024915111
+state count = 8388608
+
+Scheme type = brute
+time = 157
+path = s23-77788-brute
+sp = 0.9992607082975018, sq = 0.0007392917024915111
+state count = 8388608
+
+=== s23 with rt and modified connections ===
+
+Scheme type = greedy
+time = 10
+path = s23-77788-modified-connections-greedy
+sp = 0.9997377215216205, sq = 0.00026227847836073244
+state count = 8388608
+
+Scheme type = brute
+time = 182
+path = s23-77788-modified-connections-brute
+sp = 0.9997377215216205, sq = 0.00026227847836073244
+state count = 8388608
+
+=== s24 with d9 right ===
+
+Scheme type = greedy
+time = 21
+path = s24-d9-right-greedy
+sp = 0.9997597157514958, sq = 0.00024028424848725245
+state count = 16777216
+
+Scheme type = brute
+time = 308
+path = s24-d9-right-brute
+sp = 0.9997597157514958, sq = 0.00024028424848725245
+state count = 16777216
+
+=== s26 final ===
+
+Scheme type = greedy
+time = 106
+path = s26-final-greedy
+sp = 0.9999996724797207, sq = 3.2752016698960673e-07
+state count = 67108864
+
+Scheme type = brute
+time = 1261
+path = s26-final-brute
+sp = 0.9999996724797207, sq = 3.2752016698960673e-07
+state count = 67108864
+PS C:\Users\Bohdan\Programming\labs-5-1\SchemeReliability\x64\Release>

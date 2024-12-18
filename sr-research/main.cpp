@@ -26,5 +26,8 @@ int main()
     print("\n=== s29 with d9 d10 c7 right c8 left a4 ===\n");
     research::s29_d9_d10_c7_right_c8_left_a4();
 
+    print("\n=== s26 final ===\n");
+    research::s26_final();
+
     return 0;
 }
