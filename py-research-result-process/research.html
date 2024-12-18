@@ -7576,8 +7576,8 @@ a.anchor-link {
 
 
 <span class="k">def</span> <span class="nf">sum_probabilities</span><span class="p">(</span><span class="n">sample</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">"scheme_state"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"probability"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-    <span class="n">q</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">"scheme_state"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"probability"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">"scheme_state_sv2"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"probability"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">"scheme_state_sv2"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"probability"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"p = </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"q = </span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"p + q = </span><span class="si">{</span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -7594,12 +7594,14 @@ a.anchor-link {
         <span class="n">element_names_sv1</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">element_names_sv2</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">failed_samples</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">"scheme_state"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span>
-    <span class="n">mask_sv1</span> <span class="o">=</span> <span class="p">(</span><span class="n">failed_samples</span><span class="p">[</span><span class="n">element_names_sv1</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">mask_sv2</span> <span class="o">=</span> <span class="p">(</span><span class="n">failed_samples</span><span class="p">[</span><span class="n">element_names_sv2</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">probabilities</span> <span class="o">=</span> <span class="n">failed_samples</span><span class="p">[</span><span class="s2">"probability"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-    <span class="n">fail_probabilities_sv1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask_sv1</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">probabilities</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-    <span class="n">fail_probabilities_sv2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask_sv2</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">probabilities</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">failed_samples_sv1</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">"scheme_state_sv1"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span>
+    <span class="n">failed_samples_sv2</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">"scheme_state_sv2"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span>
+    <span class="n">mask_sv1</span> <span class="o">=</span> <span class="p">(</span><span class="n">failed_samples_sv1</span><span class="p">[</span><span class="n">element_names_sv1</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">mask_sv2</span> <span class="o">=</span> <span class="p">(</span><span class="n">failed_samples_sv2</span><span class="p">[</span><span class="n">element_names_sv2</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">probabilities_sv1</span> <span class="o">=</span> <span class="n">failed_samples_sv1</span><span class="p">[</span><span class="s2">"probability"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">probabilities_sv2</span> <span class="o">=</span> <span class="n">failed_samples_sv2</span><span class="p">[</span><span class="s2">"probability"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">fail_probabilities_sv1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask_sv1</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">probabilities_sv1</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">fail_probabilities_sv2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask_sv2</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">probabilities_sv2</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">raw_element_names</span><span class="p">)):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">raw_element_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">: sv1 = </span><span class="si">{</span><span class="n">fail_probabilities_sv1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.8e</span><span class="si">}</span><span class="s2">, sv2 = </span><span class="si">{</span><span class="n">fail_probabilities_sv2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.8e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
@@ -7610,9 +7612,9 @@ a.anchor-link {
         <span class="n">element_names_sv1</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">element_names_sv2</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">failed_samples_sv1</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">"scheme_state"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span>
+    <span class="n">failed_samples_sv1</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">"scheme_state_sv1"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span>
     <span class="n">fail_count_sv1</span> <span class="o">=</span> <span class="p">(</span><span class="n">failed_samples_sv1</span><span class="p">[</span><span class="n">element_names_sv1</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-    <span class="n">failed_samples_sv2</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">"scheme_state"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span>
+    <span class="n">failed_samples_sv2</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">"scheme_state_sv2"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span>
     <span class="n">fail_count_sv2</span> <span class="o">=</span> <span class="p">(</span><span class="n">failed_samples_sv2</span><span class="p">[</span><span class="n">element_names_sv2</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">raw_element_names</span><span class="p">)):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">raw_element_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">: sv1 = </span><span class="si">{</span><span class="n">fail_count_sv1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">, sv2 = </span><span class="si">{</span><span class="n">fail_count_sv2</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -7756,29 +7758,29 @@ q = 0.0009791430201191219
 p + q = 0.9999999999999999
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 1.46262060e-07, sv2 = 2.87982720e-08
-pr2: sv1 = 1.46262060e-07, sv2 = 2.87982720e-08
-pr3: sv1 = 1.46262060e-07, sv2 = 2.87982720e-08
+pr1: sv1 = 1.20000000e-04, sv2 = 2.87982720e-08
+pr2: sv1 = 1.20000000e-04, sv2 = 2.87982720e-08
+pr3: sv1 = 1.20000000e-04, sv2 = 2.87982720e-08
 pr4: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 pr5: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a1: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a2: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
-b1: sv1 = 1.46871453e-08, sv2 = 1.46871453e-08
+b1: sv1 = 2.00805635e-08, sv2 = 1.46871453e-08
 b2: sv1 = 1.50000000e-05, sv2 = 1.50000000e-05
 b4: sv1 = 1.50000000e-05, sv2 = 1.50000000e-05
 b5: sv1 = 1.50000000e-05, sv2 = 1.50000000e-05
-c1: sv1 = 5.69315417e-07, sv2 = 5.69315417e-07
-c2: sv1 = 5.69315417e-07, sv2 = 5.69315417e-07
+c1: sv1 = 7.16675097e-07, sv2 = 5.69315417e-07
+c2: sv1 = 7.16675097e-07, sv2 = 5.69315417e-07
 c4: sv1 = 4.10000000e-04, sv2 = 4.10000000e-04
-c5: sv1 = 5.69315219e-07, sv2 = 5.69315219e-07
-c6: sv1 = 5.69315219e-07, sv2 = 5.69315219e-07
-d1: sv1 = 2.15413552e-08, sv2 = 2.15413552e-08
-d2: sv1 = 2.15415534e-08, sv2 = 2.15415534e-08
-d3: sv1 = 2.15413552e-08, sv2 = 2.15413552e-08
+c5: sv1 = 7.16674899e-07, sv2 = 5.69315219e-07
+c6: sv1 = 7.16674899e-07, sv2 = 5.69315219e-07
+d1: sv1 = 2.94517019e-08, sv2 = 2.15413552e-08
+d2: sv1 = 2.94518999e-08, sv2 = 2.15415534e-08
+d3: sv1 = 2.94517019e-08, sv2 = 2.15413552e-08
 d6: sv1 = 2.20000000e-05, sv2 = 2.20000000e-05
 d8: sv1 = 2.20000000e-05, sv2 = 2.20000000e-05
-m1: sv1 = 4.81917997e-07, sv2 = 4.81917997e-07
-m2: sv1 = 4.81917997e-07, sv2 = 4.81917997e-07
+m1: sv1 = 6.11313451e-07, sv2 = 4.81917997e-07
+m2: sv1 = 6.11313451e-07, sv2 = 4.81917997e-07
 === sum fail count(sv1 | sv2) per pr1 * pr2 * pr3 state set ===
 case 0: sv1 = 1048576; sv2 = 4194304
 case 1: sv1 = 1048576; sv2 = 0
@@ -7820,29 +7822,29 @@ q = 0.0009791430201191219
 p + q = 0.9999999999999999
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 1.46262060e-07, sv2 = 2.87982720e-08
-pr2: sv1 = 1.46262060e-07, sv2 = 2.87982720e-08
-pr3: sv1 = 1.46262060e-07, sv2 = 2.87982720e-08
+pr1: sv1 = 1.20000000e-04, sv2 = 2.87982720e-08
+pr2: sv1 = 1.20000000e-04, sv2 = 2.87982720e-08
+pr3: sv1 = 1.20000000e-04, sv2 = 2.87982720e-08
 pr4: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 pr5: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a1: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a2: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
-b1: sv1 = 1.46871453e-08, sv2 = 1.46871453e-08
+b1: sv1 = 2.00805635e-08, sv2 = 1.46871453e-08
 b2: sv1 = 1.50000000e-05, sv2 = 1.50000000e-05
 b4: sv1 = 1.50000000e-05, sv2 = 1.50000000e-05
 b5: sv1 = 1.50000000e-05, sv2 = 1.50000000e-05
-c1: sv1 = 5.69315417e-07, sv2 = 5.69315417e-07
-c2: sv1 = 5.69315417e-07, sv2 = 5.69315417e-07
+c1: sv1 = 7.16675097e-07, sv2 = 5.69315417e-07
+c2: sv1 = 7.16675097e-07, sv2 = 5.69315417e-07
 c4: sv1 = 4.10000000e-04, sv2 = 4.10000000e-04
-c5: sv1 = 5.69315219e-07, sv2 = 5.69315219e-07
-c6: sv1 = 5.69315219e-07, sv2 = 5.69315219e-07
-d1: sv1 = 2.15413552e-08, sv2 = 2.15413552e-08
-d2: sv1 = 2.15415534e-08, sv2 = 2.15415534e-08
-d3: sv1 = 2.15413552e-08, sv2 = 2.15413552e-08
+c5: sv1 = 7.16674899e-07, sv2 = 5.69315219e-07
+c6: sv1 = 7.16674899e-07, sv2 = 5.69315219e-07
+d1: sv1 = 2.94517019e-08, sv2 = 2.15413552e-08
+d2: sv1 = 2.94518999e-08, sv2 = 2.15415534e-08
+d3: sv1 = 2.94517019e-08, sv2 = 2.15413552e-08
 d6: sv1 = 2.20000000e-05, sv2 = 2.20000000e-05
 d8: sv1 = 2.20000000e-05, sv2 = 2.20000000e-05
-m1: sv1 = 4.81917997e-07, sv2 = 4.81917997e-07
-m2: sv1 = 4.81917997e-07, sv2 = 4.81917997e-07
+m1: sv1 = 6.11313451e-07, sv2 = 4.81917997e-07
+m2: sv1 = 6.11313451e-07, sv2 = 4.81917997e-07
 === sum fail count(sv1 | sv2) per pr1 * pr2 * pr3 state set ===
 case 0: sv1 = 1048576; sv2 = 4194304
 case 1: sv1 = 1048576; sv2 = 0
@@ -7884,29 +7886,29 @@ q = 0.0007392917024916249
 p + q = 0.9999999999999999
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 8.87253609e-08, sv2 = 1.38217191e-11
-pr2: sv1 = 8.87253609e-08, sv2 = 1.38217191e-11
-pr3: sv1 = 8.87253609e-08, sv2 = 1.38217191e-11
-pr4: sv1 = 8.87253609e-08, sv2 = 1.55488898e-11
-pr5: sv1 = 8.87253609e-08, sv2 = 1.55488898e-11
+pr1: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr2: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr3: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr4: sv1 = 1.20000000e-04, sv2 = 1.55488898e-11
+pr5: sv1 = 1.20000000e-04, sv2 = 1.55488898e-11
 a1: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a2: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
-b1: sv1 = 1.10893755e-08, sv2 = 1.10893755e-08
+b1: sv1 = 2.00805635e-08, sv2 = 1.10893755e-08
 b2: sv1 = 1.50000000e-05, sv2 = 1.50000000e-05
 b4: sv1 = 1.50000000e-05, sv2 = 1.50000000e-05
 b5: sv1 = 1.50000000e-05, sv2 = 1.50000000e-05
-c1: sv1 = 4.71016679e-07, sv2 = 4.71016679e-07
-c2: sv1 = 4.71016679e-07, sv2 = 4.71016679e-07
+c1: sv1 = 7.16675097e-07, sv2 = 4.71016679e-07
+c2: sv1 = 7.16675097e-07, sv2 = 4.71016679e-07
 c4: sv1 = 4.10000000e-04, sv2 = 4.10000000e-04
-c5: sv1 = 4.71016481e-07, sv2 = 4.71016481e-07
-c6: sv1 = 4.71016481e-07, sv2 = 4.71016481e-07
-d1: sv1 = 1.62646263e-08, sv2 = 1.62646263e-08
-d2: sv1 = 1.62648245e-08, sv2 = 1.62648245e-08
-d3: sv1 = 1.62646263e-08, sv2 = 1.62646263e-08
+c5: sv1 = 7.16674899e-07, sv2 = 4.71016481e-07
+c6: sv1 = 7.16674899e-07, sv2 = 4.71016481e-07
+d1: sv1 = 2.94517019e-08, sv2 = 1.62646263e-08
+d2: sv1 = 2.94518999e-08, sv2 = 1.62648245e-08
+d3: sv1 = 2.94517019e-08, sv2 = 1.62646263e-08
 d6: sv1 = 2.20000000e-05, sv2 = 2.20000000e-05
 d8: sv1 = 2.20000000e-05, sv2 = 2.20000000e-05
-m1: sv1 = 3.95602596e-07, sv2 = 3.95602596e-07
-m2: sv1 = 3.95602596e-07, sv2 = 3.95602596e-07
+m1: sv1 = 6.11313451e-07, sv2 = 3.95602596e-07
+m2: sv1 = 6.11313451e-07, sv2 = 3.95602596e-07
 === sum fail count(sv1 | sv2) per pr1 * pr2 * pr3 state set ===
 case 0: sv1 = 1048576; sv2 = 4194304
 case 1: sv1 = 1048576; sv2 = 0
@@ -7948,29 +7950,29 @@ q = 0.0007392917024916249
 p + q = 0.9999999999999999
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 8.87253609e-08, sv2 = 1.72800000e-12
-pr2: sv1 = 8.87253609e-08, sv2 = 8.63875589e-12
-pr3: sv1 = 8.87253609e-08, sv2 = 5.18337794e-12
-pr4: sv1 = 8.87253609e-08, sv2 = 6.22030234e-16
-pr5: sv1 = 8.87253609e-08, sv2 = 5.18337794e-12
+pr1: sv1 = 1.20000000e-04, sv2 = 1.72800000e-12
+pr2: sv1 = 1.20000000e-04, sv2 = 8.63875589e-12
+pr3: sv1 = 1.20000000e-04, sv2 = 5.18337794e-12
+pr4: sv1 = 1.20000000e-04, sv2 = 6.22030234e-16
+pr5: sv1 = 1.20000000e-04, sv2 = 5.18337794e-12
 a1: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a2: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
-b1: sv1 = 1.10893755e-08, sv2 = 1.10893755e-08
+b1: sv1 = 2.00805635e-08, sv2 = 1.10893755e-08
 b2: sv1 = 1.50000000e-05, sv2 = 1.50000000e-05
 b4: sv1 = 1.50000000e-05, sv2 = 1.50000000e-05
 b5: sv1 = 1.50000000e-05, sv2 = 1.50000000e-05
-c1: sv1 = 4.71016679e-07, sv2 = 4.71016679e-07
-c2: sv1 = 4.71016679e-07, sv2 = 4.71016679e-07
+c1: sv1 = 7.16675097e-07, sv2 = 4.71016679e-07
+c2: sv1 = 7.16675097e-07, sv2 = 4.71016679e-07
 c4: sv1 = 4.10000000e-04, sv2 = 4.10000000e-04
-c5: sv1 = 4.71016481e-07, sv2 = 4.71016481e-07
-c6: sv1 = 4.71016481e-07, sv2 = 4.71016481e-07
-d1: sv1 = 1.62646263e-08, sv2 = 1.62646263e-08
-d2: sv1 = 1.62648245e-08, sv2 = 1.62648245e-08
-d3: sv1 = 1.62646263e-08, sv2 = 1.62646263e-08
+c5: sv1 = 7.16674899e-07, sv2 = 4.71016481e-07
+c6: sv1 = 7.16674899e-07, sv2 = 4.71016481e-07
+d1: sv1 = 2.94517019e-08, sv2 = 1.62646263e-08
+d2: sv1 = 2.94518999e-08, sv2 = 1.62648245e-08
+d3: sv1 = 2.94517019e-08, sv2 = 1.62646263e-08
 d6: sv1 = 2.20000000e-05, sv2 = 2.20000000e-05
 d8: sv1 = 2.20000000e-05, sv2 = 2.20000000e-05
-m1: sv1 = 3.95602596e-07, sv2 = 3.95602596e-07
-m2: sv1 = 3.95602596e-07, sv2 = 3.95602596e-07
+m1: sv1 = 6.11313451e-07, sv2 = 3.95602596e-07
+m2: sv1 = 6.11313451e-07, sv2 = 3.95602596e-07
 === sum fail count(sv1 | sv2) per pr1 * pr2 * pr3 state set ===
 case 0: sv1 = 1048576; sv2 = 4980736
 case 1: sv1 = 1048576; sv2 = 786432
@@ -8012,29 +8014,29 @@ q = 0.0002622784783607359
 p + q = 0.9999999999999997
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 3.14837790e-08, sv2 = 1.38217191e-11
-pr2: sv1 = 3.14837790e-08, sv2 = 1.38217191e-11
-pr3: sv1 = 3.14837790e-08, sv2 = 1.38217191e-11
-pr4: sv1 = 3.14837790e-08, sv2 = 1.55488898e-11
-pr5: sv1 = 3.14837790e-08, sv2 = 1.55488898e-11
+pr1: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr2: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr3: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr4: sv1 = 1.20000000e-04, sv2 = 1.55488898e-11
+pr5: sv1 = 1.20000000e-04, sv2 = 1.55488898e-11
 a1: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a2: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
-b1: sv1 = 4.15911479e-09, sv2 = 4.15911479e-09
-b2: sv1 = 4.15911479e-09, sv2 = 4.15911479e-09
-b4: sv1 = 4.15911479e-09, sv2 = 4.15911479e-09
-b5: sv1 = 4.15911479e-09, sv2 = 4.15911479e-09
-c1: sv1 = 1.07603051e-07, sv2 = 1.07603051e-07
-c2: sv1 = 1.07603051e-07, sv2 = 1.07603051e-07
-c4: sv1 = 1.07603051e-07, sv2 = 1.07603051e-07
-c5: sv1 = 2.75521212e-07, sv2 = 2.75521212e-07
-c6: sv1 = 2.75521212e-07, sv2 = 2.75521212e-07
-d1: sv1 = 5.77012652e-09, sv2 = 5.77012652e-09
-d2: sv1 = 5.77012652e-09, sv2 = 5.77012652e-09
-d3: sv1 = 5.77012652e-09, sv2 = 5.77012652e-09
-d6: sv1 = 5.77012652e-09, sv2 = 5.77012652e-09
+b1: sv1 = 1.31544599e-08, sv2 = 4.15911479e-09
+b2: sv1 = 1.31544599e-08, sv2 = 4.15911479e-09
+b4: sv1 = 1.31544599e-08, sv2 = 4.15911479e-09
+b5: sv1 = 1.31544599e-08, sv2 = 4.15911479e-09
+c1: sv1 = 3.53479464e-07, sv2 = 1.07603051e-07
+c2: sv1 = 3.53479464e-07, sv2 = 1.07603051e-07
+c4: sv1 = 3.53479464e-07, sv2 = 1.07603051e-07
+c5: sv1 = 5.21296899e-07, sv2 = 2.75521212e-07
+c6: sv1 = 5.21296899e-07, sv2 = 2.75521212e-07
+d1: sv1 = 1.89634973e-08, sv2 = 5.77012652e-09
+d2: sv1 = 1.89634973e-08, sv2 = 5.77012652e-09
+d3: sv1 = 1.89634973e-08, sv2 = 5.77012652e-09
+d6: sv1 = 1.89634973e-08, sv2 = 5.77012652e-09
 d8: sv1 = 2.20000000e-05, sv2 = 2.20000000e-05
-m1: sv1 = 2.23939634e-07, sv2 = 2.23939634e-07
-m2: sv1 = 2.23939634e-07, sv2 = 2.23939634e-07
+m1: sv1 = 4.39753462e-07, sv2 = 2.23939634e-07
+m2: sv1 = 4.39753462e-07, sv2 = 2.23939634e-07
 </pre>
 </div>
 </div>
@@ -8067,29 +8069,29 @@ q = 0.0002622784783607359
 p + q = 0.9999999999999997
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 3.14837790e-08, sv2 = 1.72800000e-12
-pr2: sv1 = 3.14837790e-08, sv2 = 8.63875589e-12
-pr3: sv1 = 3.14837790e-08, sv2 = 5.18337794e-12
-pr4: sv1 = 3.14837790e-08, sv2 = 6.22030234e-16
-pr5: sv1 = 3.14837790e-08, sv2 = 5.18337794e-12
+pr1: sv1 = 1.20000000e-04, sv2 = 1.72800000e-12
+pr2: sv1 = 1.20000000e-04, sv2 = 8.63875589e-12
+pr3: sv1 = 1.20000000e-04, sv2 = 5.18337794e-12
+pr4: sv1 = 1.20000000e-04, sv2 = 6.22030234e-16
+pr5: sv1 = 1.20000000e-04, sv2 = 5.18337794e-12
 a1: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a2: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
-b1: sv1 = 4.15911479e-09, sv2 = 4.15911479e-09
-b2: sv1 = 4.15911479e-09, sv2 = 4.15911479e-09
-b4: sv1 = 4.15911479e-09, sv2 = 4.15911479e-09
-b5: sv1 = 4.15911479e-09, sv2 = 4.15911479e-09
-c1: sv1 = 1.07603051e-07, sv2 = 1.07603051e-07
-c2: sv1 = 1.07603051e-07, sv2 = 1.07603051e-07
-c4: sv1 = 1.07603051e-07, sv2 = 1.07603051e-07
-c5: sv1 = 2.75521212e-07, sv2 = 2.75521212e-07
-c6: sv1 = 2.75521212e-07, sv2 = 2.75521212e-07
-d1: sv1 = 5.77012652e-09, sv2 = 5.77012652e-09
-d2: sv1 = 5.77012652e-09, sv2 = 5.77012652e-09
-d3: sv1 = 5.77012652e-09, sv2 = 5.77012652e-09
-d6: sv1 = 5.77012652e-09, sv2 = 5.77012652e-09
+b1: sv1 = 1.31544599e-08, sv2 = 4.15911479e-09
+b2: sv1 = 1.31544599e-08, sv2 = 4.15911479e-09
+b4: sv1 = 1.31544599e-08, sv2 = 4.15911479e-09
+b5: sv1 = 1.31544599e-08, sv2 = 4.15911479e-09
+c1: sv1 = 3.53479464e-07, sv2 = 1.07603051e-07
+c2: sv1 = 3.53479464e-07, sv2 = 1.07603051e-07
+c4: sv1 = 3.53479464e-07, sv2 = 1.07603051e-07
+c5: sv1 = 5.21296899e-07, sv2 = 2.75521212e-07
+c6: sv1 = 5.21296899e-07, sv2 = 2.75521212e-07
+d1: sv1 = 1.89634973e-08, sv2 = 5.77012652e-09
+d2: sv1 = 1.89634973e-08, sv2 = 5.77012652e-09
+d3: sv1 = 1.89634973e-08, sv2 = 5.77012652e-09
+d6: sv1 = 1.89634973e-08, sv2 = 5.77012652e-09
 d8: sv1 = 2.20000000e-05, sv2 = 2.20000000e-05
-m1: sv1 = 2.23939634e-07, sv2 = 2.23939634e-07
-m2: sv1 = 2.23939634e-07, sv2 = 2.23939634e-07
+m1: sv1 = 4.39753462e-07, sv2 = 2.23939634e-07
+m2: sv1 = 4.39753462e-07, sv2 = 2.23939634e-07
 </pre>
 </div>
 </div>
@@ -8122,30 +8124,30 @@ q = 0.0002402842484872624
 p + q = 0.9999999999999994
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 2.88444716e-08, sv2 = 1.38217191e-11
-pr2: sv1 = 2.88444716e-08, sv2 = 1.38217191e-11
-pr3: sv1 = 2.88444716e-08, sv2 = 1.38217191e-11
-pr4: sv1 = 2.88444716e-08, sv2 = 1.55488898e-11
-pr5: sv1 = 2.88444716e-08, sv2 = 1.55488898e-11
+pr1: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr2: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr3: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr4: sv1 = 1.20000000e-04, sv2 = 1.55488898e-11
+pr5: sv1 = 1.20000000e-04, sv2 = 1.55488898e-11
 a1: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a2: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
-b1: sv1 = 3.82920629e-09, sv2 = 3.82920629e-09
-b2: sv1 = 3.82920629e-09, sv2 = 3.82920629e-09
-b4: sv1 = 3.82920629e-09, sv2 = 3.82920629e-09
-b5: sv1 = 3.82920629e-09, sv2 = 3.82920629e-09
-c1: sv1 = 9.85854181e-08, sv2 = 9.85854181e-08
-c2: sv1 = 9.85854181e-08, sv2 = 9.85854181e-08
-c4: sv1 = 9.85854181e-08, sv2 = 9.85854181e-08
-c5: sv1 = 2.66507274e-07, sv2 = 2.66507274e-07
-c6: sv1 = 2.66507274e-07, sv2 = 2.66507274e-07
-d1: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
-d2: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
-d3: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
-d6: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
-d8: sv1 = 5.77012652e-09, sv2 = 5.77012652e-09
-m1: sv1 = 2.16024561e-07, sv2 = 2.16024561e-07
-m2: sv1 = 2.16024561e-07, sv2 = 2.16024561e-07
-d9: sv1 = 5.77012652e-09, sv2 = 5.77012652e-09
+b1: sv1 = 1.28247493e-08, sv2 = 3.82920629e-09
+b2: sv1 = 1.28247493e-08, sv2 = 3.82920629e-09
+b4: sv1 = 1.28247493e-08, sv2 = 3.82920629e-09
+b5: sv1 = 1.28247493e-08, sv2 = 3.82920629e-09
+c1: sv1 = 3.44467241e-07, sv2 = 9.85854181e-08
+c2: sv1 = 3.44467241e-07, sv2 = 9.85854181e-08
+c4: sv1 = 3.44467241e-07, sv2 = 9.85854181e-08
+c5: sv1 = 5.12288368e-07, sv2 = 2.66507274e-07
+c6: sv1 = 5.12288368e-07, sv2 = 2.66507274e-07
+d1: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
+d2: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
+d3: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
+d6: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
+d8: sv1 = 1.89634973e-08, sv2 = 5.77012652e-09
+m1: sv1 = 4.31843137e-07, sv2 = 2.16024561e-07
+m2: sv1 = 4.31843137e-07, sv2 = 2.16024561e-07
+d9: sv1 = 1.89634973e-08, sv2 = 5.77012652e-09
 </pre>
 </div>
 </div>
@@ -8178,30 +8180,30 @@ q = 0.0002402842484872624
 p + q = 0.9999999999999994
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 2.88444716e-08, sv2 = 1.72800000e-12
-pr2: sv1 = 2.88444716e-08, sv2 = 8.63875589e-12
-pr3: sv1 = 2.88444716e-08, sv2 = 5.18337794e-12
-pr4: sv1 = 2.88444716e-08, sv2 = 6.22030234e-16
-pr5: sv1 = 2.88444716e-08, sv2 = 5.18337794e-12
+pr1: sv1 = 1.20000000e-04, sv2 = 1.72800000e-12
+pr2: sv1 = 1.20000000e-04, sv2 = 8.63875589e-12
+pr3: sv1 = 1.20000000e-04, sv2 = 5.18337794e-12
+pr4: sv1 = 1.20000000e-04, sv2 = 6.22030234e-16
+pr5: sv1 = 1.20000000e-04, sv2 = 5.18337794e-12
 a1: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a2: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
-b1: sv1 = 3.82920629e-09, sv2 = 3.82920629e-09
-b2: sv1 = 3.82920629e-09, sv2 = 3.82920629e-09
-b4: sv1 = 3.82920629e-09, sv2 = 3.82920629e-09
-b5: sv1 = 3.82920629e-09, sv2 = 3.82920629e-09
-c1: sv1 = 9.85854181e-08, sv2 = 9.85854181e-08
-c2: sv1 = 9.85854181e-08, sv2 = 9.85854181e-08
-c4: sv1 = 9.85854181e-08, sv2 = 9.85854181e-08
-c5: sv1 = 2.66507274e-07, sv2 = 2.66507274e-07
-c6: sv1 = 2.66507274e-07, sv2 = 2.66507274e-07
-d1: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
-d2: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
-d3: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
-d6: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
-d8: sv1 = 5.77012652e-09, sv2 = 5.77012652e-09
-m1: sv1 = 2.16024561e-07, sv2 = 2.16024561e-07
-m2: sv1 = 2.16024561e-07, sv2 = 2.16024561e-07
-d9: sv1 = 5.77012652e-09, sv2 = 5.77012652e-09
+b1: sv1 = 1.28247493e-08, sv2 = 3.82920629e-09
+b2: sv1 = 1.28247493e-08, sv2 = 3.82920629e-09
+b4: sv1 = 1.28247493e-08, sv2 = 3.82920629e-09
+b5: sv1 = 1.28247493e-08, sv2 = 3.82920629e-09
+c1: sv1 = 3.44467241e-07, sv2 = 9.85854181e-08
+c2: sv1 = 3.44467241e-07, sv2 = 9.85854181e-08
+c4: sv1 = 3.44467241e-07, sv2 = 9.85854181e-08
+c5: sv1 = 5.12288368e-07, sv2 = 2.66507274e-07
+c6: sv1 = 5.12288368e-07, sv2 = 2.66507274e-07
+d1: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
+d2: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
+d3: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
+d6: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
+d8: sv1 = 1.89634973e-08, sv2 = 5.77012652e-09
+m1: sv1 = 4.31843137e-07, sv2 = 2.16024561e-07
+m2: sv1 = 4.31843137e-07, sv2 = 2.16024561e-07
+d9: sv1 = 1.89634973e-08, sv2 = 5.77012652e-09
 </pre>
 </div>
 </div>
@@ -8234,31 +8236,31 @@ q = 0.00024028376461420454
 p + q = 0.9999999999999991
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 2.88444135e-08, sv2 = 1.38217191e-11
-pr2: sv1 = 2.88444135e-08, sv2 = 1.38217191e-11
-pr3: sv1 = 2.88444135e-08, sv2 = 1.38217191e-11
-pr4: sv1 = 2.88444135e-08, sv2 = 1.55488898e-11
-pr5: sv1 = 2.88444135e-08, sv2 = 1.55488898e-11
+pr1: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr2: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr3: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr4: sv1 = 1.20000000e-04, sv2 = 1.55488898e-11
+pr5: sv1 = 1.20000000e-04, sv2 = 1.55488898e-11
 a1: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a2: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
-b1: sv1 = 3.82919903e-09, sv2 = 3.82919903e-09
-b2: sv1 = 3.82919903e-09, sv2 = 3.82919903e-09
-b4: sv1 = 3.82919903e-09, sv2 = 3.82919903e-09
-b5: sv1 = 3.82919903e-09, sv2 = 3.82919903e-09
-c1: sv1 = 9.85852197e-08, sv2 = 9.85852197e-08
-c2: sv1 = 9.85852197e-08, sv2 = 9.85852197e-08
-c4: sv1 = 9.85852197e-08, sv2 = 9.85852197e-08
-c5: sv1 = 2.66507076e-07, sv2 = 2.66507076e-07
-c6: sv1 = 2.66507076e-07, sv2 = 2.66507076e-07
-d1: sv1 = 5.28624282e-09, sv2 = 5.28624282e-09
-d2: sv1 = 5.28624282e-09, sv2 = 5.28624282e-09
-d3: sv1 = 5.28624282e-09, sv2 = 5.28624282e-09
-d6: sv1 = 5.28624282e-09, sv2 = 5.28624282e-09
-d8: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
-m1: sv1 = 2.16024386e-07, sv2 = 2.16024386e-07
-m2: sv1 = 2.16024386e-07, sv2 = 2.16024386e-07
-d9: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
-d10: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
+b1: sv1 = 1.28247421e-08, sv2 = 3.82919903e-09
+b2: sv1 = 1.28247421e-08, sv2 = 3.82919903e-09
+b4: sv1 = 1.28247421e-08, sv2 = 3.82919903e-09
+b5: sv1 = 1.28247421e-08, sv2 = 3.82919903e-09
+c1: sv1 = 3.44467043e-07, sv2 = 9.85852197e-08
+c2: sv1 = 3.44467043e-07, sv2 = 9.85852197e-08
+c4: sv1 = 3.44467043e-07, sv2 = 9.85852197e-08
+c5: sv1 = 5.12288170e-07, sv2 = 2.66507076e-07
+c6: sv1 = 5.12288170e-07, sv2 = 2.66507076e-07
+d1: sv1 = 1.84799038e-08, sv2 = 5.28624282e-09
+d2: sv1 = 1.84799038e-08, sv2 = 5.28624282e-09
+d3: sv1 = 1.84799038e-08, sv2 = 5.28624282e-09
+d6: sv1 = 1.84799038e-08, sv2 = 5.28624282e-09
+d8: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
+m1: sv1 = 4.31842963e-07, sv2 = 2.16024386e-07
+m2: sv1 = 4.31842963e-07, sv2 = 2.16024386e-07
+d9: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
+d10: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
 </pre>
 </div>
 </div>
@@ -8291,31 +8293,31 @@ q = 0.00024028376461420454
 p + q = 0.9999999999999991
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 2.88444135e-08, sv2 = 1.72800000e-12
-pr2: sv1 = 2.88444135e-08, sv2 = 8.63875589e-12
-pr3: sv1 = 2.88444135e-08, sv2 = 5.18337794e-12
-pr4: sv1 = 2.88444135e-08, sv2 = 6.22030234e-16
-pr5: sv1 = 2.88444135e-08, sv2 = 5.18337794e-12
+pr1: sv1 = 1.20000000e-04, sv2 = 1.72800000e-12
+pr2: sv1 = 1.20000000e-04, sv2 = 8.63875589e-12
+pr3: sv1 = 1.20000000e-04, sv2 = 5.18337794e-12
+pr4: sv1 = 1.20000000e-04, sv2 = 6.22030234e-16
+pr5: sv1 = 1.20000000e-04, sv2 = 5.18337794e-12
 a1: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a2: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
-b1: sv1 = 3.82919903e-09, sv2 = 3.82919903e-09
-b2: sv1 = 3.82919903e-09, sv2 = 3.82919903e-09
-b4: sv1 = 3.82919903e-09, sv2 = 3.82919903e-09
-b5: sv1 = 3.82919903e-09, sv2 = 3.82919903e-09
-c1: sv1 = 9.85852197e-08, sv2 = 9.85852197e-08
-c2: sv1 = 9.85852197e-08, sv2 = 9.85852197e-08
-c4: sv1 = 9.85852197e-08, sv2 = 9.85852197e-08
-c5: sv1 = 2.66507076e-07, sv2 = 2.66507076e-07
-c6: sv1 = 2.66507076e-07, sv2 = 2.66507076e-07
-d1: sv1 = 5.28624282e-09, sv2 = 5.28624282e-09
-d2: sv1 = 5.28624282e-09, sv2 = 5.28624282e-09
-d3: sv1 = 5.28624282e-09, sv2 = 5.28624282e-09
-d6: sv1 = 5.28624282e-09, sv2 = 5.28624282e-09
-d8: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
-m1: sv1 = 2.16024386e-07, sv2 = 2.16024386e-07
-m2: sv1 = 2.16024386e-07, sv2 = 2.16024386e-07
-d9: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
-d10: sv1 = 5.28625347e-09, sv2 = 5.28625347e-09
+b1: sv1 = 1.28247421e-08, sv2 = 3.82919903e-09
+b2: sv1 = 1.28247421e-08, sv2 = 3.82919903e-09
+b4: sv1 = 1.28247421e-08, sv2 = 3.82919903e-09
+b5: sv1 = 1.28247421e-08, sv2 = 3.82919903e-09
+c1: sv1 = 3.44467043e-07, sv2 = 9.85852197e-08
+c2: sv1 = 3.44467043e-07, sv2 = 9.85852197e-08
+c4: sv1 = 3.44467043e-07, sv2 = 9.85852197e-08
+c5: sv1 = 5.12288170e-07, sv2 = 2.66507076e-07
+c6: sv1 = 5.12288170e-07, sv2 = 2.66507076e-07
+d1: sv1 = 1.84799038e-08, sv2 = 5.28624282e-09
+d2: sv1 = 1.84799038e-08, sv2 = 5.28624282e-09
+d3: sv1 = 1.84799038e-08, sv2 = 5.28624282e-09
+d6: sv1 = 1.84799038e-08, sv2 = 5.28624282e-09
+d8: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
+m1: sv1 = 4.31842963e-07, sv2 = 2.16024386e-07
+m2: sv1 = 4.31842963e-07, sv2 = 2.16024386e-07
+d9: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
+d10: sv1 = 1.84799145e-08, sv2 = 5.28625347e-09
 </pre>
 </div>
 </div>
@@ -8348,33 +8350,33 @@ q = 0.00024011570500590327
 p + q = 0.9999999999999996
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 2.88242464e-08, sv2 = 1.38217191e-11
-pr2: sv1 = 2.88242464e-08, sv2 = 1.38217191e-11
-pr3: sv1 = 2.88242464e-08, sv2 = 1.38217191e-11
-pr4: sv1 = 2.88242464e-08, sv2 = 1.55488898e-11
-pr5: sv1 = 2.88242464e-08, sv2 = 1.55488898e-11
+pr1: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr2: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr3: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr4: sv1 = 1.20000000e-04, sv2 = 1.55488898e-11
+pr5: sv1 = 1.20000000e-04, sv2 = 1.55488898e-11
 a1: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a2: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
-b1: sv1 = 3.82667817e-09, sv2 = 3.82667817e-09
-b2: sv1 = 3.82667817e-09, sv2 = 3.82667817e-09
-b4: sv1 = 3.82667817e-09, sv2 = 3.82667817e-09
-b5: sv1 = 3.82667817e-09, sv2 = 3.82667817e-09
-c1: sv1 = 9.84474673e-08, sv2 = 9.84474673e-08
-c2: sv1 = 9.84474673e-08, sv2 = 9.84474673e-08
-c4: sv1 = 9.84474673e-08, sv2 = 9.84474673e-08
-c5: sv1 = 9.85163153e-08, sv2 = 9.85163153e-08
-c6: sv1 = 9.85163153e-08, sv2 = 9.85163153e-08
-d1: sv1 = 5.28254551e-09, sv2 = 5.28254551e-09
-d2: sv1 = 5.28254551e-09, sv2 = 5.28254551e-09
-d3: sv1 = 5.28254551e-09, sv2 = 5.28254551e-09
-d6: sv1 = 5.28254551e-09, sv2 = 5.28254551e-09
-d8: sv1 = 5.28255616e-09, sv2 = 5.28255616e-09
-m1: sv1 = 2.15963907e-07, sv2 = 2.15963907e-07
-m2: sv1 = 2.15963907e-07, sv2 = 2.15963907e-07
-d9: sv1 = 5.28255616e-09, sv2 = 5.28255616e-09
-d10: sv1 = 5.28255616e-09, sv2 = 5.28255616e-09
-c7: sv1 = 9.85163153e-08, sv2 = 9.85163153e-08
-c8: sv1 = 9.84474673e-08, sv2 = 9.84474673e-08
+b1: sv1 = 1.28222227e-08, sv2 = 3.82667817e-09
+b2: sv1 = 1.28222227e-08, sv2 = 3.82667817e-09
+b4: sv1 = 1.28222227e-08, sv2 = 3.82667817e-09
+b5: sv1 = 1.28222227e-08, sv2 = 3.82667817e-09
+c1: sv1 = 3.44329373e-07, sv2 = 9.84474673e-08
+c2: sv1 = 3.44329373e-07, sv2 = 9.84474673e-08
+c4: sv1 = 3.44329373e-07, sv2 = 9.84474673e-08
+c5: sv1 = 3.44398180e-07, sv2 = 9.85163153e-08
+c6: sv1 = 3.44398180e-07, sv2 = 9.85163153e-08
+d1: sv1 = 1.84762087e-08, sv2 = 5.28254551e-09
+d2: sv1 = 1.84762087e-08, sv2 = 5.28254551e-09
+d3: sv1 = 1.84762087e-08, sv2 = 5.28254551e-09
+d6: sv1 = 1.84762087e-08, sv2 = 5.28254551e-09
+d8: sv1 = 1.84762194e-08, sv2 = 5.28255616e-09
+m1: sv1 = 4.31782520e-07, sv2 = 2.15963907e-07
+m2: sv1 = 4.31782520e-07, sv2 = 2.15963907e-07
+d9: sv1 = 1.84762194e-08, sv2 = 5.28255616e-09
+d10: sv1 = 1.84762194e-08, sv2 = 5.28255616e-09
+c7: sv1 = 3.44398180e-07, sv2 = 9.85163153e-08
+c8: sv1 = 3.44329373e-07, sv2 = 9.84474673e-08
 </pre>
 </div>
 </div>
@@ -8407,33 +8409,33 @@ q = 0.00024011570500590327
 p + q = 0.9999999999999996
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 2.88242464e-08, sv2 = 1.72800000e-12
-pr2: sv1 = 2.88242464e-08, sv2 = 8.63875589e-12
-pr3: sv1 = 2.88242464e-08, sv2 = 5.18337794e-12
-pr4: sv1 = 2.88242464e-08, sv2 = 6.22030234e-16
-pr5: sv1 = 2.88242464e-08, sv2 = 5.18337794e-12
+pr1: sv1 = 1.20000000e-04, sv2 = 1.72800000e-12
+pr2: sv1 = 1.20000000e-04, sv2 = 8.63875589e-12
+pr3: sv1 = 1.20000000e-04, sv2 = 5.18337794e-12
+pr4: sv1 = 1.20000000e-04, sv2 = 6.22030234e-16
+pr5: sv1 = 1.20000000e-04, sv2 = 5.18337794e-12
 a1: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
 a2: sv1 = 1.20000000e-04, sv2 = 1.20000000e-04
-b1: sv1 = 3.82667817e-09, sv2 = 3.82667817e-09
-b2: sv1 = 3.82667817e-09, sv2 = 3.82667817e-09
-b4: sv1 = 3.82667817e-09, sv2 = 3.82667817e-09
-b5: sv1 = 3.82667817e-09, sv2 = 3.82667817e-09
-c1: sv1 = 9.84474673e-08, sv2 = 9.84474673e-08
-c2: sv1 = 9.84474673e-08, sv2 = 9.84474673e-08
-c4: sv1 = 9.84474673e-08, sv2 = 9.84474673e-08
-c5: sv1 = 9.85163153e-08, sv2 = 9.85163153e-08
-c6: sv1 = 9.85163153e-08, sv2 = 9.85163153e-08
-d1: sv1 = 5.28254551e-09, sv2 = 5.28254551e-09
-d2: sv1 = 5.28254551e-09, sv2 = 5.28254551e-09
-d3: sv1 = 5.28254551e-09, sv2 = 5.28254551e-09
-d6: sv1 = 5.28254551e-09, sv2 = 5.28254551e-09
-d8: sv1 = 5.28255616e-09, sv2 = 5.28255616e-09
-m1: sv1 = 2.15963907e-07, sv2 = 2.15963907e-07
-m2: sv1 = 2.15963907e-07, sv2 = 2.15963907e-07
-d9: sv1 = 5.28255616e-09, sv2 = 5.28255616e-09
-d10: sv1 = 5.28255616e-09, sv2 = 5.28255616e-09
-c7: sv1 = 9.85163153e-08, sv2 = 9.85163153e-08
-c8: sv1 = 9.84474673e-08, sv2 = 9.84474673e-08
+b1: sv1 = 1.28222227e-08, sv2 = 3.82667817e-09
+b2: sv1 = 1.28222227e-08, sv2 = 3.82667817e-09
+b4: sv1 = 1.28222227e-08, sv2 = 3.82667817e-09
+b5: sv1 = 1.28222227e-08, sv2 = 3.82667817e-09
+c1: sv1 = 3.44329373e-07, sv2 = 9.84474673e-08
+c2: sv1 = 3.44329373e-07, sv2 = 9.84474673e-08
+c4: sv1 = 3.44329373e-07, sv2 = 9.84474673e-08
+c5: sv1 = 3.44398180e-07, sv2 = 9.85163153e-08
+c6: sv1 = 3.44398180e-07, sv2 = 9.85163153e-08
+d1: sv1 = 1.84762087e-08, sv2 = 5.28254551e-09
+d2: sv1 = 1.84762087e-08, sv2 = 5.28254551e-09
+d3: sv1 = 1.84762087e-08, sv2 = 5.28254551e-09
+d6: sv1 = 1.84762087e-08, sv2 = 5.28254551e-09
+d8: sv1 = 1.84762194e-08, sv2 = 5.28255616e-09
+m1: sv1 = 4.31782520e-07, sv2 = 2.15963907e-07
+m2: sv1 = 4.31782520e-07, sv2 = 2.15963907e-07
+d9: sv1 = 1.84762194e-08, sv2 = 5.28255616e-09
+d10: sv1 = 1.84762194e-08, sv2 = 5.28255616e-09
+c7: sv1 = 3.44398180e-07, sv2 = 9.85163153e-08
+c8: sv1 = 3.44329373e-07, sv2 = 9.84474673e-08
 </pre>
 </div>
 </div>
@@ -8466,35 +8468,35 @@ q = 1.5893623277071066e-07
 p + q = 0.9999999999999886
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 2.94366143e-11, sv2 = 1.38217191e-11
-pr2: sv1 = 2.94366143e-11, sv2 = 1.38217191e-11
-pr3: sv1 = 2.94366143e-11, sv2 = 1.38217191e-11
-pr4: sv1 = 2.94366143e-11, sv2 = 1.55488898e-11
-pr5: sv1 = 2.94366143e-11, sv2 = 1.55488898e-11
-a1: sv1 = 1.44173423e-08, sv2 = 1.44173423e-08
-a2: sv1 = 1.44173423e-08, sv2 = 1.44173423e-08
-b1: sv1 = 2.27380633e-10, sv2 = 2.27380633e-10
-b2: sv1 = 2.27380633e-10, sv2 = 2.27380633e-10
-b4: sv1 = 2.27380633e-10, sv2 = 2.27380633e-10
-b5: sv1 = 2.27380633e-10, sv2 = 2.27380633e-10
-c1: sv1 = 6.51921015e-11, sv2 = 6.51921015e-11
-c2: sv1 = 6.51921015e-11, sv2 = 6.51921015e-11
-c4: sv1 = 6.51921015e-11, sv2 = 6.51921015e-11
-c5: sv1 = 1.34056587e-10, sv2 = 1.34056587e-10
-c6: sv1 = 1.34056587e-10, sv2 = 1.34056587e-10
-d1: sv1 = 3.49659736e-12, sv2 = 3.49659736e-12
-d2: sv1 = 3.49659736e-12, sv2 = 3.49659736e-12
-d3: sv1 = 3.49659736e-12, sv2 = 3.49659736e-12
-d6: sv1 = 3.49659736e-12, sv2 = 3.49659736e-12
-d8: sv1 = 3.50724489e-12, sv2 = 3.50724489e-12
-m1: sv1 = 1.29610557e-07, sv2 = 1.29610557e-07
-m2: sv1 = 1.29610557e-07, sv2 = 1.29610557e-07
-d9: sv1 = 3.50724489e-12, sv2 = 3.50724489e-12
-d10: sv1 = 3.50724489e-12, sv2 = 3.50724489e-12
-c7: sv1 = 1.34056587e-10, sv2 = 1.34056587e-10
-c8: sv1 = 6.51921015e-11, sv2 = 6.51921015e-11
-a3: sv1 = 1.44173423e-08, sv2 = 1.44173423e-08
-a4: sv1 = 1.44173423e-08, sv2 = 1.44173423e-08
+pr1: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr2: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr3: sv1 = 1.20000000e-04, sv2 = 1.38217191e-11
+pr4: sv1 = 1.20000000e-04, sv2 = 1.55488898e-11
+pr5: sv1 = 1.20000000e-04, sv2 = 1.55488898e-11
+a1: sv1 = 8.63914139e-08, sv2 = 1.44173423e-08
+a2: sv1 = 8.63914139e-08, sv2 = 1.44173423e-08
+b1: sv1 = 9.22508424e-09, sv2 = 2.27380633e-10
+b2: sv1 = 9.22508424e-09, sv2 = 2.27380633e-10
+b4: sv1 = 9.22508424e-09, sv2 = 2.27380633e-10
+b5: sv1 = 9.22508424e-09, sv2 = 2.27380633e-10
+c1: sv1 = 2.46006113e-07, sv2 = 6.51921015e-11
+c2: sv1 = 2.46006113e-07, sv2 = 6.51921015e-11
+c4: sv1 = 2.46006113e-07, sv2 = 6.51921015e-11
+c5: sv1 = 2.46074936e-07, sv2 = 1.34056587e-10
+c6: sv1 = 2.46074936e-07, sv2 = 1.34056587e-10
+d1: sv1 = 1.32003265e-08, sv2 = 3.49659736e-12
+d2: sv1 = 1.32003265e-08, sv2 = 3.49659736e-12
+d3: sv1 = 1.32003265e-08, sv2 = 3.49659736e-12
+d6: sv1 = 1.32003265e-08, sv2 = 3.49659736e-12
+d8: sv1 = 1.32003371e-08, sv2 = 3.50724489e-12
+m1: sv1 = 3.45480970e-07, sv2 = 1.29610557e-07
+m2: sv1 = 3.45480970e-07, sv2 = 1.29610557e-07
+d9: sv1 = 1.32003371e-08, sv2 = 3.50724489e-12
+d10: sv1 = 1.32003371e-08, sv2 = 3.50724489e-12
+c7: sv1 = 2.46074936e-07, sv2 = 1.34056587e-10
+c8: sv1 = 2.46006113e-07, sv2 = 6.51921015e-11
+a3: sv1 = 8.63914139e-08, sv2 = 1.44173423e-08
+a4: sv1 = 8.63914139e-08, sv2 = 1.44173423e-08
 </pre>
 </div>
 </div>
@@ -8527,35 +8529,35 @@ q = 1.5893623277071066e-07
 p + q = 0.9999999999999886
 === reconfiguration is consistent ===
 === sum fail probability(sv1 | sv2) per element ===
-pr1: sv1 = 2.94366143e-11, sv2 = 1.72800000e-12
-pr2: sv1 = 2.94366143e-11, sv2 = 8.63875589e-12
-pr3: sv1 = 2.94366143e-11, sv2 = 5.18337794e-12
-pr4: sv1 = 2.94366143e-11, sv2 = 6.22030234e-16
-pr5: sv1 = 2.94366143e-11, sv2 = 5.18337794e-12
-a1: sv1 = 1.44173423e-08, sv2 = 1.44173423e-08
-a2: sv1 = 1.44173423e-08, sv2 = 1.44173423e-08
-b1: sv1 = 2.27380633e-10, sv2 = 2.27380633e-10
-b2: sv1 = 2.27380633e-10, sv2 = 2.27380633e-10
-b4: sv1 = 2.27380633e-10, sv2 = 2.27380633e-10
-b5: sv1 = 2.27380633e-10, sv2 = 2.27380633e-10
-c1: sv1 = 6.51921015e-11, sv2 = 6.51921015e-11
-c2: sv1 = 6.51921015e-11, sv2 = 6.51921015e-11
-c4: sv1 = 6.51921015e-11, sv2 = 6.51921015e-11
-c5: sv1 = 1.34056587e-10, sv2 = 1.34056587e-10
-c6: sv1 = 1.34056587e-10, sv2 = 1.34056587e-10
-d1: sv1 = 3.49659736e-12, sv2 = 3.49659736e-12
-d2: sv1 = 3.49659736e-12, sv2 = 3.49659736e-12
-d3: sv1 = 3.49659736e-12, sv2 = 3.49659736e-12
-d6: sv1 = 3.49659736e-12, sv2 = 3.49659736e-12
-d8: sv1 = 3.50724489e-12, sv2 = 3.50724489e-12
-m1: sv1 = 1.29610557e-07, sv2 = 1.29610557e-07
-m2: sv1 = 1.29610557e-07, sv2 = 1.29610557e-07
-d9: sv1 = 3.50724489e-12, sv2 = 3.50724489e-12
-d10: sv1 = 3.50724489e-12, sv2 = 3.50724489e-12
-c7: sv1 = 1.34056587e-10, sv2 = 1.34056587e-10
-c8: sv1 = 6.51921015e-11, sv2 = 6.51921015e-11
-a3: sv1 = 1.44173423e-08, sv2 = 1.44173423e-08
-a4: sv1 = 1.44173423e-08, sv2 = 1.44173423e-08
+pr1: sv1 = 1.20000000e-04, sv2 = 1.72800000e-12
+pr2: sv1 = 1.20000000e-04, sv2 = 8.63875589e-12
+pr3: sv1 = 1.20000000e-04, sv2 = 5.18337794e-12
+pr4: sv1 = 1.20000000e-04, sv2 = 6.22030234e-16
+pr5: sv1 = 1.20000000e-04, sv2 = 5.18337794e-12
+a1: sv1 = 8.63914139e-08, sv2 = 1.44173423e-08
+a2: sv1 = 8.63914139e-08, sv2 = 1.44173423e-08
+b1: sv1 = 9.22508424e-09, sv2 = 2.27380633e-10
+b2: sv1 = 9.22508424e-09, sv2 = 2.27380633e-10
+b4: sv1 = 9.22508424e-09, sv2 = 2.27380633e-10
+b5: sv1 = 9.22508424e-09, sv2 = 2.27380633e-10
+c1: sv1 = 2.46006113e-07, sv2 = 6.51921015e-11
+c2: sv1 = 2.46006113e-07, sv2 = 6.51921015e-11
+c4: sv1 = 2.46006113e-07, sv2 = 6.51921015e-11
+c5: sv1 = 2.46074936e-07, sv2 = 1.34056587e-10
+c6: sv1 = 2.46074936e-07, sv2 = 1.34056587e-10
+d1: sv1 = 1.32003265e-08, sv2 = 3.49659736e-12
+d2: sv1 = 1.32003265e-08, sv2 = 3.49659736e-12
+d3: sv1 = 1.32003265e-08, sv2 = 3.49659736e-12
+d6: sv1 = 1.32003265e-08, sv2 = 3.49659736e-12
+d8: sv1 = 1.32003371e-08, sv2 = 3.50724489e-12
+m1: sv1 = 3.45480970e-07, sv2 = 1.29610557e-07
+m2: sv1 = 3.45480970e-07, sv2 = 1.29610557e-07
+d9: sv1 = 1.32003371e-08, sv2 = 3.50724489e-12
+d10: sv1 = 1.32003371e-08, sv2 = 3.50724489e-12
+c7: sv1 = 2.46074936e-07, sv2 = 1.34056587e-10
+c8: sv1 = 2.46006113e-07, sv2 = 6.51921015e-11
+a3: sv1 = 8.63914139e-08, sv2 = 1.44173423e-08
+a4: sv1 = 8.63914139e-08, sv2 = 1.44173423e-08
 </pre>
 </div>
 </div>
